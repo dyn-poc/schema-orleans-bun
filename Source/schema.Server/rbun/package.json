@@ -1,0 +1,38 @@
+{
+  "private": true,
+  "sideEffects": false,
+  "scripts": {
+    "certs": "bun run ./aspnetcore-https.js && bun run ./aspnetcore-react.js",
+
+    "build": "remix build",
+    "dev": "remix dev -c \"bun run start\"",
+    "start": "bun run server.ts",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.6.0",
+    "@remix-run/css-bundle": "latest",
+    "@remix-run/node": "latest",
+    "@remix-run/react": "latest",
+    "@remix-run/serve": "latest",
+    "@remix-run/server-runtime": "latest",
+    "axios": "^1.5.1",
+    "http-proxy-middleware": "^2.0.6",
+    "isbot": "^3.6.8",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@remix-run/dev": "latest",
+    "@remix-run/eslint-config": "latest",
+    "@types/react": "^18.0.35",
+    "@types/react-dom": "^18.0.11",
+    "bun-types": "^1.0.1",
+    "eslint": "^8.38.0",
+    "typescript": "^5.0.4"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "bun": ">=1.0.0"
+  }
+}

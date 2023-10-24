@@ -1,0 +1,8 @@
+{
+  "SpaProxyServer": {
+    "ServerUrl": "http://localhost:44414",
+    "LaunchCommand": "bun run dev",
+    "WorkingDirectory": "/Users/I347305/Src/orleans/schema/schema/Source/schema.web/rbun/",
+    "MaxTimeoutInSeconds": "500"
+  }
+}

@@ -1,0 +1,74 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup Label="Build">
+        <TargetFramework>net6.0</TargetFramework>
+        <!-- Used to store connection strings and other sensitive settings, so you don't have to check them into your source
+             control provider. Only use this in Development, it is not intended for Production use.
+             See http://docs.asp.net/en/latest/security/app-secrets.html -->
+        <UserSecretsId>schema.Server-E7AAB45F-78EF-4664-A3F9-1A9CCF9E03F1</UserSecretsId>
+        <!-- Disable publishing of a web.config file for IIS when calling dotnet publish. -->
+        <IsTransformWebConfigDisabled Condition="'$(IIS)' == 'false'">true</IsTransformWebConfigDisabled>
+    </PropertyGroup>
+
+    <PropertyGroup Label="Docker">
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <DockerfileContext>..\..</DockerfileContext>
+    </PropertyGroup>
+
+    <PropertyGroup Label="Package">
+        <Authors>Project Author</Authors>
+        <Company>Project Author</Company>
+        <Product>Project Title</Product>
+        <Description>Project Description</Description>
+        <Copyright>Copyright © Project Author. All rights Reserved</Copyright>
+    </PropertyGroup>
+
+    <ItemGroup Label="Package References">
+        <PackageReference Include="Boxed.AspNetCore" Version="8.1.2"/>
+        <PackageReference Include="OrleansDashboard" Version="3.6.2"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="6.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1"/>
+        <PackageReference Include="Microsoft.Orleans.Clustering.AzureStorage" Version="3.6.5"/>
+        <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" PrivateAssets="all" Version="3.6.5">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Orleans.OrleansTelemetryConsumers.Counters" Version="3.6.5"/>
+        <PackageReference Include="Microsoft.Orleans.OrleansTelemetryConsumers.Linux" Version="3.6.5"/>
+        <PackageReference Include="Microsoft.Orleans.Persistence.AzureStorage" Version="3.6.5"/>
+        <PackageReference Include="Microsoft.Orleans.Reminders.AzureStorage" Version="3.6.5"/>
+        <PackageReference Include="Microsoft.Orleans.Server" Version="3.6.5"/>
+        <PackageReference Include="Microsoft.Orleans.Transactions" Version="3.6.5"/>
+        <PackageReference Include="Microsoft.Orleans.Transactions.AzureStorage" Version="3.6.5"/>
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0"/>
+    </ItemGroup>
+
+    <ItemGroup Label="Project References">
+        <ProjectReference Include="..\schema.Abstractions\schema.Abstractions.csproj"/>
+        <ProjectReference Include="..\schema.Grains\schema.Grains.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="rbun\.cache\content-v2\sha512\1f\a2\411c804afa1ffe6b4894b43a8b22cb2194cd0b6a02d68bf6c3bb9355a48df62cbe5f9a013ec3d188608dca9ea96d5d1e1dfb1e9d818cf3173c7e0fe1404f" />
+      <None Include="rbun\.cache\content-v2\sha512\1f\e9\d9d7602421dd49e8d184124ebe7022b87c0e03189f2579626f4c006dc309372fb65388dc375a2ed5ab28e7d6d7ff843e53f9155626d42a531cd120ef2cee" />
+      <None Include="rbun\.cache\content-v2\sha512\31\86\c99e188b470ef34104c04c0bdadee60b28cbb8de31397157eb86ba52e22ba6749cf1486e9bd54b96c1c43966db61d37227b7278a1d67fde89426ef88727f" />
+      <None Include="rbun\.cache\content-v2\sha512\67\cf\23861d4249c3db4268b8c1b955d6aee90414ad81d7b63757440605e30a6a3a66f3805c27d72010b039487b53fbddedb08ee8b8a9b33dab926c0e1d6efee8" />
+      <None Include="rbun\.cache\content-v2\sha512\7e\23\a9188650bd86a79441a4369a43a81690c10a8472d16a3975b21aa0647f059a0e53bf2837328b7e0df0411cfd6cc0c476704eec40ca13b5d8e5a27512380a" />
+      <None Include="rbun\.cache\content-v2\sha512\8c\1a\f2e1c8d100a8ccfd27c2058371ae4fb2a5c35398a3c5c2397cc0b9b70487df306fe997e3bc52e62b45bc19e911a81d2f5994009eefbbd675d928327803fd" />
+      <None Include="rbun\.cache\content-v2\sha512\ba\77\04623d9d2d5b2eef3c19e6d1693af756ea1d61ff708944af266b9c701fe59c5fc92d07428b34136c58edce3f2a774af82c9d828d6d90a65ef5046259bb89" />
+      <None Include="rbun\.cache\content-v2\sha512\bf\09\9d8285e1e514187c2603281a64f7b7e408df8f261fd3ea89e86ee2e63941ec9d17ce24b4f1d2bd80fb71c6ac765faa3da7ecff2e9e64d8876e3789d0cd9a" />
+      <None Include="rbun\.cache\content-v2\sha512\cf\44\20dc768b522a1ed136d8f0dfe80abf1532e017e8572bf4fd3a629d8c39b9303ad7a35cd230fd694425377ca60e5918d94317f5604a0e48ee1c9a727e9ed1" />
+      <None Include="rbun\.cache\content-v2\sha512\e6\b5\4c391271b6f53508be2c59d902b2720e6c76731925733a99d147d59bc4a6b38654a65d6b4a3499bc1e9a267a5ea9c7d8ac9222832309d3df18baae0a3b7f" />
+      <None Include="rbun\.cache\index-v5\43\7e\a2725cd00407f4865ff7f6ef65127bf5ad705d28d98dbf16dbafc109bf5f" />
+      <None Include="rbun\.cache\index-v5\a5\40\f9a25272ba6c7cb358b1b201eb756c8576e7ac6108cbf46041c03bb8316b" />
+      <None Include="rbun\.cache\index-v5\cc\06\bc469d43ef00232e4dabc11d01f2dbe8faf0f8f8ace5662e2f3d54ecb6d3" />
+      <None Include="rbun\.cache\index-v5\d0\c4\d960260ece228d28f70e317741b3f3f3df05c53956d870235837ae2b73b4" />
+      <None Include="rbun\.github\FUNDING.yml" />
+      <None Include="rbun\build\metafile.css.json" />
+      <None Include="rbun\build\metafile.js.json" />
+      <None Include="rbun\build\metafile.server.json" />
+      <None Include="rbun\package.json" />
+      <None Include="rbun\tsconfig.json" />
+    </ItemGroup>
+
+</Project>

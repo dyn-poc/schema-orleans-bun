@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup Label="Build">
+        <TargetFramework>net6.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup Label="Package Versions">
+        <PackageReference Include="coverlet.collector" PrivateAssets="all" Version="3.1.2">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.0"/>
+        <PackageReference Include="Microsoft.Orleans.TestingHost" Version="3.6.5"/>
+        <PackageReference Include="xunit" Version="2.4.2"/>
+        <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" Version="2.4.5">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup Label="Project References">
+        <ProjectReference Include="..\..\Source\schema.Abstractions\schema.Abstractions.csproj"/>
+        <ProjectReference Include="..\..\Source\schema.Grains\schema.Grains.csproj"/>
+    </ItemGroup>
+
+</Project>
