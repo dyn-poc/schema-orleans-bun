@@ -6,7 +6,7 @@
         <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
         <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
         <IsPackable>false</IsPackable>
-        <SpaRoot>rbun\</SpaRoot>
+        <SpaRoot>ClientApp\</SpaRoot>
         <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
@@ -57,7 +57,7 @@
             </ResolvedFileToPublish>
         </ItemGroup>
     </Target>
- 
+
 
   <ItemGroup>
     <None Update="RemixApp\.prettierignore">
