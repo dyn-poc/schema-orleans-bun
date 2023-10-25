@@ -79,4 +79,9 @@
     <_ContentIncludedByDefault Remove="remix\tsconfig.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ClientApp\app\components\" />
+    <Folder Include="ClientApp\cers\" />
+  </ItemGroup>
+
 </Project>

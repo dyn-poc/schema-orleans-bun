@@ -16,7 +16,7 @@ public static class SchemaAPI
     {
         static JsonObject GetSchema(string baseUri) => new JsonObject()
         {
-            ["$schema"] = "https://json-schema.org/draft/2020-12/schema",
+            ["$schema"] = "https://json-schema.org/draft-07/schema#",
             ["$id"] = baseUri,
             // ["apiKey"] =apiKey,
             ["type"] = "object",
@@ -38,6 +38,32 @@ public static class SchemaAPI
             ["required"] = new JsonArray { "name", "age" }
         };
 
+          static JsonObject GetDataSchema(string baseUri) => new()
+        {
+            ["$schema"] = "https://json-schema.org/draft-07/schema#",
+            ["$id"] = baseUri,
+            ["$anchor"] = "data",
+            ["type"] = "object",
+            ["properties"] = new JsonObject
+            {
+                ["zip"] = new JsonObject
+                {
+                    ["$anchor"] = $"zip",
+                    ["type"] = "string",
+                    ["description"] = "Name of the person",
+                    ["minLength"] = 2,
+                    ["maxLength"] = 10
+                },
+                ["customer_id"] = new JsonObject
+                {
+                    ["$anchor"] = "customer_id", ["type"] = "integer", ["minimum"] = 18, ["maximum"] = 99
+                }
+            }
+        };
+        var logGetSchema=LoggerMessage.Define<string>(LogLevel.Trace, new EventId(12, "Get Schema"), "Get Schema {ID}");
+        var logResolveSchema=LoggerMessage.Define<string>(LogLevel.Trace, new EventId(13, "Resolve Schema"), "Resolve Schema {ID}");
+
+
 
 
         //add middleware to resolve schema if x-resolve header is present
@@ -46,22 +72,14 @@ public static class SchemaAPI
                 var Request = context.Request;
                 var Response = context.Response;
                 var logger = app.Services.GetRequiredService<ILogger<Program>>();
-                var httpClient = app.Services.GetRequiredService<IHttpClientFactory>().CreateClient("schema");
-                logger.LogInformation("Resolve Schema");
+                logGetSchema(logger, Request.GetDisplayUrl(), null);
 
 
                 await next().ConfigureAwait(false);
 
                 if (context.Items.TryGetValue("schema", out var schema) && schema is not null)
                 {
-                    // var resolve = Request.Headers["x-resolve"].FirstOrDefault();
-                    // if (resolve != null)
-                    // {
-                    //
-                    //     logger.LogInformation(schema.ToString());
-                    //     schema = JsonSchema.FromText(schema.ToString()).Bundle();
-                    // }
-
+                    logResolveSchema(logger, Request.GetDisplayUrl(), null);
                     // content type for json schema
                     Response.ContentType = "application/schema+json";
                     Response.Headers.ETag = "\"" + schema.GetHashCode() + "\"";
@@ -79,34 +97,15 @@ public static class SchemaAPI
         app.MapGet("/schema/{apiKey}", async (context) =>
         {
             var Request = context.Request;
-            var Response = context.Response;
-            var logger = app.Services.GetRequiredService<ILogger<Program>>();
-            logger.LogInformation("Get Schema");
-
 
             var baseUri = $"{Request.Scheme}://{Request.Host}{Request.Path}";
-            // var schema = new JsonObject()
-            // {
-            //     ["$id"] = baseUri,
-            //     ["$schema"] = "https://json-schema.org/draft/2020-12/schema",
-            //     ["type"] = "object",
-            //     ["properties"] = new JsonObject()
-            //     {
-            //         ["profile"] = new JsonObject() { ["$ref"] = $"{baseUri}/profile" },
-            //         ["data"] = new JsonObject() { ["$ref"] = $"{baseUri}/profile" }
-            //         // ["name"] = new JsonObject() { ["$ref"] = $"profile/name" }
-            //     }
-            // };
-            logger.LogInformation("Get Schema");
-            var schema = await app.Services
+            var schema = await app
+                .Services
                 .GetRequiredService<SchemaRegistryService>()
                 .ClusterClient.GetGrain<IResolvedSchemaGrain>(baseUri)
-                .GetSchema();
+                .GetSchema()
+                .ConfigureAwait(false);
 
-            logger.LogInformation(JsonSerializer.Serialize(schema, new JsonSerializerOptions()
-            {
-                WriteIndented = true
-            }));
             context.Items["schema"] = schema;
         });
 
@@ -115,11 +114,26 @@ public static class SchemaAPI
             var Request = context.Request;
             var Response = context.Response;
             var logger = app.Services.GetRequiredService<ILogger<Program>>();
-            logger.LogInformation("Get Schema");
 
             var baseUri = Request.GetDisplayUrl();
             var schema = GetSchema(baseUri);
             context.Items["schema"] = schema;
+        });
+
+
+        app.MapGet("/schema/{apiKey}/data", async (context) =>
+        {
+            var Request = context.Request;
+            var baseUri = Request.GetDisplayUrl();
+            // var schema = await app
+            //     .Services
+            //     .GetRequiredService<SchemaRegistryService>()
+            //     .ClusterClient.GetGrain<IResolvedSchemaGrain>(baseUri)
+            //     .GetSchema("/data")
+            //     .ConfigureAwait(false);
+
+
+            context.Items["schema"] = GetDataSchema(baseUri);
         });
     }
 }

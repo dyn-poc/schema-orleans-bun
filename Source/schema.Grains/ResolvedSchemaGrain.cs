@@ -25,6 +25,7 @@ public class ResolvedSchemaGrain : Grain, IResolvedSchemaGrain
         this.httpClient = httpClient;
         this.options = new EvaluationOptions()
         {
+            EvaluateAs = SpecVersion.Draft202012,
             SchemaRegistry =
             {
                 // Fetch = this.DownloadSchema
@@ -42,10 +43,21 @@ public class ResolvedSchemaGrain : Grain, IResolvedSchemaGrain
             new JsonNodeBaseDocument(GetSchema(this.GetPrimaryKeyString()), new Uri(this.GetPrimaryKeyString()));
         this.options.EvaluateAs = SpecVersion.Draft202012;
         this.options.SchemaRegistry.Register(GetProfileSchema(this.GetPrimaryKeyString()).Deserialize<JsonSchema>()!);
+        this.options.SchemaRegistry.Register(GetDataSchema(this.GetPrimaryKeyString()).Deserialize<JsonSchema>()!);
+
         this.options.SchemaRegistry.Register(GetSchema(this.GetPrimaryKeyString()).Deserialize<JsonSchema>()!);
         this.bundled =
             this.options.SchemaRegistry.Get(new Uri(this.GetPrimaryKeyString()))!.FindSubschema(JsonPointer.Parse("#"),
                 this.options)!.Bundle(this.options);
+
+        //workaround to add $schema keyword to the bundled schema
+        this.bundled = new JsonSchemaBuilder()
+            .Id(this.bundled.BaseUri)
+            .Defs(this.bundled.GetDefs()!)
+            .Ref(this.bundled.BaseUri)
+            .Schema("https://json-schema.org/draft-07/schema#" )
+            .Build();
+
         return Task.CompletedTask;
     }
 
@@ -62,21 +74,53 @@ public class ResolvedSchemaGrain : Grain, IResolvedSchemaGrain
         new()
         {
             ["$id"] = baseUri,
-            ["$schema"] = "https://json-schema.org/draft/2020-12/schema",
             ["type"] = "object",
             ["properties"] = new JsonObject()
             {
-                ["profile"] = new JsonObject() { ["$ref"] = $"#/$defs/profile" },
-                ["data"] = new JsonObject() { ["$ref"] = $"#/$defs/profile" }
+                ["profile"] = new JsonObject() { ["$ref"] = $"profile" },
+                ["data"] = new JsonObject() { ["$ref"] = $"data" }
                 // ["name"] = new JsonObject() { ["$ref"] = $"profile/name" }
             },
-            ["$defs"] = new JsonObject() { ["profile"] = new JsonObject() { ["$ref"] = $"{baseUri}/profile" } }
+            ["$defs"] = new JsonObject() {
+                ["profile"] = new JsonObject()
+            {
+                ["$ref"] = $"{baseUri}/profile",
+                ["$id"] = "profile"
+            } ,
+                ["data"]= new JsonObject()
+                {
+                    [$"$ref"] = $"{baseUri}/data",
+                    ["$id"] = "data"
+                }
+            }
         };
 
+    public static JsonObject GetDataSchema(string baseUri) => new()
+    {
+        ["$id"] = $"{baseUri}/data",
+        ["$anchor"] = "data",
+        ["type"] = "object",
+        ["properties"] = new JsonObject
+        {
+            ["zip"] = new JsonObject
+            {
+                ["$anchor"] = $"zip",
+                ["type"] = "string",
+                ["description"] = "Name of the person",
+                ["minLength"] = 2,
+                ["maxLength"] = 10
+            },
+            ["customer_id"] = new JsonObject
+            {
+                ["$anchor"] = "customer_id", ["type"] = "integer", ["minimum"] = 18, ["maximum"] = 99
+            }
+        }
+    };
     public static JsonObject GetProfileSchema(string baseUri) => new()
     {
         ["$schema"] = "https://json-schema.org/draft/2020-12/schema",
         ["$id"] = $"{baseUri}/profile",
+        ["$anchor"] = "profile",
         // ["apiKey"] =apiKey,
         ["type"] = "object",
         ["properties"] = new JsonObject
