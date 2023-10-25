@@ -7,6 +7,7 @@ import {Link, NavLink, Outlet, useLoaderData, useMatch} from "@remix-run/react";
 import { JSONPath } from '@astronautlabs/jsonpath';
 import clsx from "clsx";
 import * as path from "path";
+import Json from '~/editor';
 
 const mock = {
  "$schema": "http://json-schema.org/draft-04/schema#",
@@ -38,19 +39,6 @@ export async function loader({
 }
 
 
-async function tryFetchSchema({ $schema}:{$schema: string}) {
-  if ($schema) {
-    try {
-      let res = await fetch($schema);
-      return await res.json();
-    } catch (e) {
-      console.error(e);
-    }
-  }
-  console.log("no schema or error", $schema)
-  return undefined;
-}
-
 
 export default function SchemaViewer() {
 
@@ -78,8 +66,18 @@ export default function SchemaViewer() {
             style={{ height: `calc(100%)` }}
         >
 
-            <h2>{site}</h2>
 
+          <NavLink
+            to='.'
+            relative={"route"}
+            style={({ isActive, isPending }) => {
+              return {
+                fontWeight: isActive ? "bold" : ""};
+            }}
+            state={{ ref: site, absolute: false, href: site }}
+          >
+            <h2>{site}</h2>
+          </NavLink>
               <aside
                   className={clsx(
                       "px-4 py-6 bg-gray-300 relative h-full overflow-y-auto max-w-max"
@@ -109,7 +107,7 @@ export default function SchemaViewer() {
               </aside>
           <Outlet context={{site , schema:"name"}} />
 
-          {/*<Json schema={schema} src={json}/>*/}
+          <Json  src={json}/>
 
       </div>
     </>
