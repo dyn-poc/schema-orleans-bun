@@ -18,7 +18,7 @@ const validators: PlaygroundProps['validators'] = {
     // AJV8_2020
 };
 
-const themes: PlaygroundProps['themes'] = {
+export const themes: PlaygroundProps['themes'] = {
     default: {
         stylesheet: '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css',
         theme: {},

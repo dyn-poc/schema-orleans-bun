@@ -1,6 +1,7 @@
 namespace schema.Grains;
 
 using Json.Schema;
+using Json.Schema.Generation;
 
 public class SchemaConvert
 {
@@ -8,8 +9,9 @@ public class SchemaConvert
 }
 
 public record Schema(Dictionary<string, Field> Fields,
-    string Root)
+    string Root="root")
 {
+    [Required] public Dictionary<string, Field> Fields { get; init; } = Fields;
     public FieldNode ToTree()
     {
         var fields = from field in this.Fields

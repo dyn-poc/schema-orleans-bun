@@ -13,6 +13,7 @@ import { CssBaseline } from '@mui/material';
 import { CacheProvider } from '@emotion/react';
 import createCache, { EmotionCache } from '@emotion/cache';
 import Frame, { FrameComponentProps, FrameContextConsumer } from 'react-frame-component';
+import ErrorBoundary from "~/playground/ErrorBoundary";
 // import { __createChakraFrameProvider } from '@rjsf/chakra-ui';
 // import { StyleProvider as AntdStyleProvider } from '@ant-design/cssinjs';
 
@@ -43,7 +44,7 @@ SOFTWARE.
 */
 
 interface DemoFrameProps extends FrameComponentProps {
-    theme: string;
+    theme?: string;
     /** override children to be ReactElement to avoid Typescript issue. In this case we don't need to worry about
      * children being of the other valid ReactNode types, undefined and string as it always contains an RJSF `Form`
      */
@@ -106,9 +107,11 @@ export default function DemoFrame(props: DemoFrameProps) {
 
 
     return (
-        <Frame ref={handleRef} contentDidMount={onContentDidMount} head={head} {...frameProps}>
-            <div id='demo-frame-jss' />
-            {body}
-        </Frame>
+        <ErrorBoundary>
+            <Frame ref={handleRef} contentDidMount={onContentDidMount} head={head} {...frameProps}>
+                <div id='demo-frame-jss' />
+                {body}
+            </Frame>
+        </ErrorBoundary>
     );
 }

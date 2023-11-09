@@ -1,7 +1,9 @@
 namespace schema.Server;
 
 using System.Runtime.InteropServices;
+using Abstractions.Grains;
 using Json.Schema;
+using Microsoft.Extensions.Logging.Console;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Orleans;
@@ -83,6 +85,15 @@ public class Program
                         context.Configuration.GetSection(nameof(ApplicationOptions.Cluster)));
                     services.Configure<StorageOptions>(
                         context.Configuration.GetSection(nameof(ApplicationOptions.Storage)));
+                    services.AddHttpClient()
+                        .AddHttpClient<IProfileSchemaGrain>();
+                    services.AddHttpClient();
+                    services.AddLogging(logger=>
+                    {
+                        logger.AddConsole();
+                        // TypeNameHelper.GetTypeDisplayName(typeof (T), includeGenericParameters: false, nestedTypeDelimiter: '.')
+                    });
+
                 })
             .UseSiloUnobservedExceptionsHandler()
             .UseLocalhostClustering(EndpointOptions.DEFAULT_SILO_PORT, EndpointOptions.DEFAULT_GATEWAY_PORT)

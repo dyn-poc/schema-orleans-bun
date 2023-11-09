@@ -9,7 +9,7 @@ export type UiSchema = any;
 import {RefResolver} from "json-schema-ref-resolver";
 import {Grid} from '@mui/material';
 import Samples, {Sample} from "~/samples";
-import {json} from "@remix-run/node";
+import {json, LoaderFunctionArgs} from "@remix-run/node";
 import {useLoaderData} from "@remix-run/react";
 import ajv from "ajv";
 import v8Validator, { customizeValidator } from '@rjsf/validator-ajv8';
@@ -169,8 +169,14 @@ function Errors({ errors , onChange }: ErrorsEditorProps) {
     return <> { errors && <Editor title='extraErrors' code={toJson(errors)} onChange={onChange} /> }</>;
 }
 // combine editors into a remix router
-export  function loader({schema}:{schema: "simple" | "communication"}) {
-    return json(Samples[schema]);
+export async function loader({
+                                 params:{schema}
+
+                             }: LoaderFunctionArgs ) {
+
+    const sample = schema as "simple" || "communication";
+    return json(Samples[sample]);
+
 }
 
 export default function EditorsPage() {

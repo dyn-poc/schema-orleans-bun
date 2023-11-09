@@ -25,7 +25,7 @@ public class ResolvedSchemaGrain : Grain, IResolvedSchemaGrain
         this.httpClient = httpClient;
         this.options = new EvaluationOptions()
         {
-            EvaluateAs = SpecVersion.Draft202012,
+            EvaluateAs = SpecVersion.Draft7,
             SchemaRegistry =
             {
                 // Fetch = this.DownloadSchema
@@ -41,7 +41,6 @@ public class ResolvedSchemaGrain : Grain, IResolvedSchemaGrain
 
         this.root =
             new JsonNodeBaseDocument(GetSchema(this.GetPrimaryKeyString()), new Uri(this.GetPrimaryKeyString()));
-        this.options.EvaluateAs = SpecVersion.Draft202012;
         this.options.SchemaRegistry.Register(GetProfileSchema(this.GetPrimaryKeyString()).Deserialize<JsonSchema>()!);
         this.options.SchemaRegistry.Register(GetDataSchema(this.GetPrimaryKeyString()).Deserialize<JsonSchema>()!);
 
@@ -51,11 +50,22 @@ public class ResolvedSchemaGrain : Grain, IResolvedSchemaGrain
                 this.options)!.Bundle(this.options);
 
         //workaround to add $schema keyword to the bundled schema
-        this.bundled = new JsonSchemaBuilder()
+        var builder = new JsonSchemaBuilder()
             .Id(this.bundled.BaseUri)
-            .Defs(this.bundled.GetDefs()!)
-            .Ref(this.bundled.BaseUri)
-            .Schema("https://json-schema.org/draft-07/schema#" )
+            .Ref(this.bundled.GetRef()!);
+
+        if (this.bundled.GetDefinitions() is not null and var definitions)
+        {
+            builder.Definitions(definitions);
+        }
+
+        if (this.bundled.GetDefs() is not null and var defs)
+        {
+            builder.Defs(defs);
+        }
+
+        this.bundled = builder
+            .Schema(this.bundled.GetSchema() ?? new Uri("https://json-schema.org/draft-07/schema#"))
             .Build();
 
         return Task.CompletedTask;

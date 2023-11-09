@@ -1,7 +1,10 @@
 namespace schema.Grains;
 
+using Json.Schema.Generation;
+
 public record Field
 {
+    [Required]
     public string Type { get; init; }
 
     public bool? Required { get; set; }

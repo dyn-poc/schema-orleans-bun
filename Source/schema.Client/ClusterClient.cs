@@ -33,7 +33,8 @@ public class SchemaClusterClient
                 parts => parts
                     .AddApplicationPart(typeof(ISchemaGrain).Assembly)
                     .WithReferences())
-            .AddSimpleMessageStreamProvider(StreamProviderName.Default);
+            .AddSimpleMessageStreamProvider(StreamProviderName.Default)
+            ;
 
 
 }

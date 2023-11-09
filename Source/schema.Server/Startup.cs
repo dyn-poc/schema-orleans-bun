@@ -1,7 +1,9 @@
 namespace schema.Server;
 
+using Abstractions.Grains;
 using Grains;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.HttpLogging;
 using schema.Server.HealthChecks;
 
 #pragma warning disable CA1724 // The type name conflicts with the namespace name 'Orleans.Runtime.Startup'
@@ -32,12 +34,21 @@ public class Startup
         services
             .AddHttpClient()
             .AddHttpClient<ResolvedSchemaGrain>();
-
+        services.AddHttpClient()
+            .AddHttpClient<IProfileSchemaGrain>();
+        services.AddHttpClient();
         services.AddHealthChecks()
             .AddCheck<ClusterHealthCheck>(nameof(ClusterHealthCheck))
             .AddCheck<GrainHealthCheck>(nameof(GrainHealthCheck))
             .AddCheck<SiloHealthCheck>(nameof(SiloHealthCheck))
             .AddCheck<StorageHealthCheck>(nameof(StorageHealthCheck));
+
+        services.AddLogging().AddHttpLogging(http =>
+        {
+            http.LoggingFields = HttpLoggingFields.All;
+        });
+
+
 
     }
 

@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient<SchemaRegistryService>();
 builder.Services.AddSingleton<SchemaRegistryService>();
+
 builder.Services.AddHostedService<SchemaRegistryService>(services => services.GetRequiredService<SchemaRegistryService>());
 
 builder.Services.AddLogging(logger=>logger.AddConsole());

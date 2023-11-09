@@ -4,9 +4,11 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Abstractions;
+using Abstractions.Grains;
 using Json.More;
 using Json.Schema;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
 using Orleans;
 using CacheControlHeaderValue = Microsoft.Net.Http.Headers.CacheControlHeaderValue;
 
@@ -71,7 +73,7 @@ public static class SchemaAPI
             {
                 var Request = context.Request;
                 var Response = context.Response;
-                var logger = app.Services.GetRequiredService<ILogger<Program>>();
+                var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
                 logGetSchema(logger, Request.GetDisplayUrl(), null);
 
 
@@ -94,46 +96,68 @@ public static class SchemaAPI
             }
         );
 
-        app.MapGet("/schema/{apiKey}", async (context) =>
+        app.MapGet("/schema/{apiKey}/profile", async (context) =>
         {
             var Request = context.Request;
 
-            var baseUri = $"{Request.Scheme}://{Request.Host}{Request.Path}";
-            var schema = await app
-                .Services
+            var schema = await context
+                .RequestServices
                 .GetRequiredService<SchemaRegistryService>()
-                .ClusterClient.GetGrain<IResolvedSchemaGrain>(baseUri)
-                .GetSchema()
+                .ClusterClient.GetGrain<IProfileSchemaGrain>(new Uri(Request.GetDisplayUrl()).GetParentUri().ToString().TrimEnd('/'))
+                .GetSchemaAsync("profile")
                 .ConfigureAwait(false);
 
             context.Items["schema"] = schema;
         });
 
-        app.MapGet("/schema/{apiKey}/profile", async (context) =>
+
+
+        app.MapGet("/schema/{apiKey}", async (context) =>
         {
             var Request = context.Request;
-            var Response = context.Response;
-            var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
-            var baseUri = Request.GetDisplayUrl();
-            var schema = GetSchema(baseUri);
+
+            var schema = await context
+                .RequestServices
+                .GetRequiredService<SchemaRegistryService>()
+                .ClusterClient.GetGrain<ISchemaGrain>(Request.GetDisplayUrl())
+                .GetSchemaAsync()
+                .ConfigureAwait(false);
+
             context.Items["schema"] = schema;
         });
 
 
-        app.MapGet("/schema/{apiKey}/data", async (context) =>
+        app.MapGet("/schema/{apiKey}/bundled", async (context) =>
         {
             var Request = context.Request;
-            var baseUri = Request.GetDisplayUrl();
-            // var schema = await app
-            //     .Services
-            //     .GetRequiredService<SchemaRegistryService>()
-            //     .ClusterClient.GetGrain<IResolvedSchemaGrain>(baseUri)
-            //     .GetSchema("/data")
-            //     .ConfigureAwait(false);
 
 
-            context.Items["schema"] = GetDataSchema(baseUri);
+            var schema = await app
+                .Services
+                .GetRequiredService<SchemaRegistryService>()
+                .ClusterClient.GetGrain<IBundledSchemaGrain>(new Uri(Request.GetDisplayUrl()).GetParentUri().ToString().TrimEnd('/'))
+                .GetSchemaAsync()
+                .ConfigureAwait(false);
+
+            context.Items["schema"] = schema;
         });
+
+        app.MapPost("/schema/{apiKey}/{type}", async (context ) =>
+        {
+            var Request = context.Request;
+            var type = context.GetRouteValue("type") as string;
+
+            var schema = await context
+                .RequestServices
+                .GetRequiredService<SchemaRegistryService>()
+                .ClusterClient.GetGrain<IProfileSchemaGrain>(new Uri(Request.GetDisplayUrl()).GetParentUri().ToString().TrimEnd('/'))
+                .GetSchemaAsync(type)
+                .ConfigureAwait(false);
+
+            context.Items["schema"] = schema;
+
+        });
+
     }
 }

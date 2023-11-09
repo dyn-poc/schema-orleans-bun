@@ -23,7 +23,7 @@ public class FieldNode : Dictionary<string, FieldNode>
         schemaBuilder.Title(this.Name);
         schemaBuilder.Description(this.Name);
         schemaBuilder.Id(this.Id);
-        schemaBuilder.Anchor(this.Name);
+        // schemaBuilder.Anchor(this.Name);
         if (this.Field is not null)
         {
             ApplyFieldSchema(this.Field, schemaBuilder);
@@ -33,6 +33,7 @@ public class FieldNode : Dictionary<string, FieldNode>
         if (this.Values.Any())
         {
             schemaBuilder
+                .AdditionalProperties(false)
                 .Properties(this.Values.Select(v => (v.Name, v.Apply(new JsonSchemaBuilder()).Build()))
                 .ToArray());
             // TODO: Required fields
