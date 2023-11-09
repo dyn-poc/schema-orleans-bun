@@ -6,5 +6,30 @@ export default {
   serverBuildPath: "build/index.js",
   // publicPath: "/build/",
   serverModuleFormat: "esm",
-  browserNodeBuiltinsPolyfill: { modules: { path: true ,  process: true} }
+  browserNodeBuiltinsPolyfill:{
+    modules: {
+      buffer: true, // Provide a JSPM polyfill
+      fs: "empty", // Provide an empty polyfill,
+      path: true ,
+      process: true,
+      dom:true
+    },
+    globals: {
+      Buffer: true,
+    },
+  }
 };
+
+//
+// exports.browserNodeBuiltinsPolyfill = {
+//   modules: {
+//     buffer: true, // Provide a JSPM polyfill
+//     fs: "empty", // Provide an empty polyfill,
+//     path: true ,
+//     process: true,
+//     dom:true
+//   },
+//   globals: {
+//     Buffer: true,
+//   },
+// };

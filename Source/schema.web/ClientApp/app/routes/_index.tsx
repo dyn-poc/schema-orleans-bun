@@ -1,5 +1,5 @@
 import { json, type MetaFunction } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import {NavLink, useLoaderData} from "@remix-run/react";
 import { db } from "~/db.server";
 
 export const meta: MetaFunction = () => {
@@ -8,14 +8,18 @@ export const meta: MetaFunction = () => {
     { name: "description", content: "Welcome to Remix on Bun!" },
   ];
 };
-
+declare type site ={
+  apiKey: string
+}
 export async function loader() {
-  return json(db.query("select 'Hello from bun:sqlite' as message;").get());
+  return json(db.query(`select $apiKey as apiKey;`).all({$apiKey: '4_DxFqHMTOAJNe9VmFvyO3Uw'} , {$apiKey: '4_1zeDwL2G6qXsS1wRbOrTeA' }));
 }
 
-export default function Index() {
-  let { message } = useLoaderData<{ message: string }>();
 
+export default function Index() {
+  let sites = useLoaderData<site[]>();
+  console.log("sites", sites);
+console.log(sites);
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
       <h1>Welcome to Remix on Bun!</h1>
@@ -23,7 +27,12 @@ export default function Index() {
         This app is using <a href="https://bun.sh">Bun</a> as a runtime.
       </p>
       <hr />
-      <h2>{message}</h2>
+      { sites.map(({apiKey})=> {
+          return <NavLink key={apiKey} to={apiKey} >{apiKey}</NavLink>
+      })}
+
+
+
       <p>
         ☝️ That message above me was returned from <code>bun:sqlite</code>{" "}
         running completely in-memory.

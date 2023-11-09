@@ -27,7 +27,7 @@ export const meta: MetaFunction<
     const site = matches.find(
         (match) => match.id === "routes/$site"
     );
-    console.log("meta", {site, data, matches});
+    // console.log("meta", {site, data, matches});
     return [{ title: data.title, description: data.description }];
 };
 
@@ -48,11 +48,11 @@ export async function loader({
     try{
         const response =  await schema(`${site}/${schemaName}`);
         const {data } = response;
-        console.log("get schema", {
-            site,
-            schemaName,
-            data,
-            response
+        console.log(`GET ${site}/${schemaName}:` , {
+            status_code: response.status,
+            status_text: response.statusText,
+            headers: JSON.stringify(response.headers, null, 2),
+            data: response.data
         });
         return json( data || mock)
 

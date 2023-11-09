@@ -15,7 +15,13 @@ export const links: LinksFunction = () => [
   {
     rel: "stylesheet",
     href: "https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css",
-  },
+  },{
+    rel: "stylesheet",
+    href: "//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css",
+  },{
+  rel: "stylesheet",
+    href:"https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+}
 ];
 
 export default function App() {

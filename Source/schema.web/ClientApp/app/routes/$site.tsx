@@ -23,11 +23,17 @@ const mock = {
   }
 };
 export async function loader({
-                                 params:{site, schema: schemaName}
+                                 params:{site}
 
                              }: LoaderFunctionArgs) {
     try{
         const response = await schema(`${site}`);
+        console.log(`GET ${site}:`, {
+            status_code: response.status,
+            status_text: response.statusText,
+            headers: JSON.stringify(response.headers, null, 2),
+            data: response.data
+        });
         const {data } = response.data? response : {data: mock};
 
         return json( {site, json: data || mock})
@@ -47,7 +53,7 @@ export default function SchemaViewer() {
 
     console.log("json", {json, site});
   //find all the $ref in the json
-  const refs = JSONPath.query(json, "$..['$ref']").map(
+  const refs = JSONPath.query(json || {}, "$..['$ref']").map(
     (ref: string) => {return {
         href:  path.isAbsolute(ref) ? `absolute` : ref,
         ref: ref,
@@ -105,7 +111,7 @@ export default function SchemaViewer() {
                       </ul>
                   </nav>
               </aside>
-          <Outlet context={{site , schema:"name"}} />
+          <Outlet context={{site  }} />
 
           <Json  src={json}/>
 
