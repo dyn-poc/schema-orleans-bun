@@ -33,6 +33,9 @@ jobs:
         with:
           lfs: true
           fetch-depth: 0
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
       - name: "Install .NET Core SDK"
         uses: actions/setup-dotnet@v2.1.0
       - name: "Dotnet Tool Restore"
@@ -58,11 +61,11 @@ jobs:
     env:
       DOCKER_IMAGE_NAME: schema
       DOCKER_REGISTRY: ghcr.io
-      DOCKER_USERNAME: username
+      DOCKER_USERNAME: dyn-poc
       DOCKER_PASSWORD: ${{secrets.GITHUB_TOKEN}}
     environment:
       name: "GitHub Container Registry"
-      url: https://github.com/Username/Project/pkgs/container/schema
+      url: https://github.com/dyn-poc/Project/pkgs/container/schema
     permissions:
       packages: write
     runs-on: ${{matrix.os}}
