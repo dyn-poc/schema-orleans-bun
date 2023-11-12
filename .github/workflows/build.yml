@@ -34,6 +34,7 @@ jobs:
           lfs: true
           fetch-depth: 0
       - uses: oven-sh/setup-bun@v1
+        name: "Install Bun"
         with:
           bun-version: latest
       - name: "Install .NET Core SDK"
