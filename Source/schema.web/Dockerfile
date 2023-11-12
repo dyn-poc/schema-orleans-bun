@@ -12,10 +12,10 @@ RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /src
-COPY ["schema/Source/schema.web/schema.web.csproj", "schema/Source/schema.web/"]
-RUN dotnet restore "schema/Source/schema.web/schema.web.csproj"
+COPY ["Source/schema.web/schema.web.csproj", "schema/Source/schema.web/"]
+RUN dotnet restore "Source/schema.web/schema.web.csproj"
 COPY . .
-WORKDIR "/src/schema/Source/schema.web"
+WORKDIR "/src/Source/schema.web"
 RUN dotnet build "schema.web.csproj" -c Release -o /app/build
 
 FROM build AS publish
