@@ -61,7 +61,14 @@ export default function SchemaViewer() {
         def: ref.startsWith( "#/definitions/") || ref.startsWith( "#/components/schemas/") || ref.startsWith( "#/$defs/")
 
     }}
-  );
+  ).filter(({def})=> !def)
+      .reduce((acc, {href, ref, absolute}) => {
+            if(!acc.find(({href: h})=> h === href)){
+                acc.push({href, ref, absolute})
+            }
+            return acc;
+        }, [] as {href: string, ref: string, absolute: boolean}[]);
+    console.log("refs", {refs});
 
 
 
@@ -90,7 +97,24 @@ export default function SchemaViewer() {
                   )}
               >
                   <nav>
-                      <ul className="space-y-2">
+
+                      <ul className="space-y-2 nav">
+                          <li className={"nav-item"}>
+                              <NavLink
+                                  to="bundled"
+                                  relative={"route"}
+                                  className={"nav-link"}
+                                  style={({ isActive, isPending }) => {
+                                      return {
+                                          fontWeight: isActive ? "bold" : "",
+                                          color: isPending ? "red" : "black",
+                                      };
+                                  }}
+                                  state={{ ref: site, absolute: false, href: site }}
+                              >
+                                  bundled
+                              </NavLink>
+                          </li>
                           {refs.filter(r=> !r.absolute).map(({href, ref, absolute}) => (
                               <li key={ref}>
                                   <NavLink
@@ -108,6 +132,7 @@ export default function SchemaViewer() {
                                   </NavLink>
                               </li>
                           ))}
+
                       </ul>
                   </nav>
               </aside>
