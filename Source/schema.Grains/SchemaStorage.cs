@@ -7,6 +7,9 @@ using Orleans.Core;
 using Orleans.Runtime;
 using Orleans.Storage;
 
+/// <summary>
+/// NOT IN USED + Has bugs
+/// </summary>
 public class MixinJsonSchema
 {
     public JsonDocument Schema { get; set; }
@@ -24,6 +27,10 @@ public class MixinJsonSchema
     }
 }
 
+
+/// <summary>
+/// NOT IN USED + Has bugs
+/// </summary>
 public class SchemaStorage: IStorage<JsonSchema>
 {
     private readonly string fullStateName;

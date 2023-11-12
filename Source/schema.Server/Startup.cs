@@ -33,9 +33,9 @@ public class Startup
 
         services
             .AddHttpClient()
-            .AddHttpClient<ResolvedSchemaGrain>();
+            .AddHttpClient<MockSchemaGrain>();
         services.AddHttpClient()
-            .AddHttpClient<IProfileSchemaGrain>();
+            .AddHttpClient<ISchemaRegistryGrain>();
         services.AddHttpClient();
         services.AddHealthChecks()
             .AddCheck<ClusterHealthCheck>(nameof(ClusterHealthCheck))

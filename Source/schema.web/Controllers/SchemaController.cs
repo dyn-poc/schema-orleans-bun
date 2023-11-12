@@ -103,7 +103,7 @@ public static class SchemaAPI
             var schema = await context
                 .RequestServices
                 .GetRequiredService<SchemaRegistryService>()
-                .ClusterClient.GetGrain<IProfileSchemaGrain>(new Uri(Request.GetDisplayUrl()).GetParentUri().ToString().TrimEnd('/'))
+                .ClusterClient.GetGrain<ISchemaRegistryGrain>(new Uri(Request.GetDisplayUrl()).GetParentUri().ToString().TrimEnd('/'))
                 .GetSchemaAsync("profile")
                 .ConfigureAwait(false);
 
@@ -151,7 +151,7 @@ public static class SchemaAPI
             var schema = await context
                 .RequestServices
                 .GetRequiredService<SchemaRegistryService>()
-                .ClusterClient.GetGrain<IProfileSchemaGrain>(new Uri(Request.GetDisplayUrl()).GetParentUri().ToString().TrimEnd('/'))
+                .ClusterClient.GetGrain<ISchemaRegistryGrain>(new Uri(Request.GetDisplayUrl()).GetParentUri().ToString().TrimEnd('/'))
                 .GetSchemaAsync(type)
                 .ConfigureAwait(false);
 

@@ -20,31 +20,13 @@ public record UserInfo(JsonSchema JsonSchema)
     {
     }
 }
-// public record UserInfo(string Id, Dictionary<string, UserInfo.Section> Sections)
-// {
-//     public UserInfo() : this("id", new Dictionary<string, Section>())
-//     {
-//     }
-//     public JsonSchemaBuilder JsonSchemaBuilder =>
-//         new JsonSchemaBuilder()
-//             .Id(this.Id)
-//             .Properties(this.Sections.Select(e => (e.Key, e.Value.Apply(new JsonSchemaBuilder()).Build())).ToArray()
-//             );
-//
-//     public record Section(string Ref, IReadOnlyDictionary<string, JsonSchema> Properties)
-//     {
-//         public JsonSchemaBuilder Apply(JsonSchemaBuilder builder) =>
-//             builder.Ref(this.Ref).Properties(this.Properties).AdditionalProperties(false);
-//
-//      }
-//
-// }
 
-public record struct SchemaKey(string Base, string Id, string Type)
+
+public readonly record struct SchemaKey(string Base, string Id, string Type)
 {
 
     /// Serialize Key
-    public override readonly string ToString() => $"{this.Base}|{this.Id}|{this.Type}";
+    public override string ToString() => $"{this.Base}|{this.Id}|{this.Type}";
 
     public static implicit operator SchemaKey (string keyString) => FromString(keyString);
     public static implicit operator string (SchemaKey key) => key.ToString();
@@ -55,10 +37,9 @@ public record struct SchemaKey(string Base, string Id, string Type)
         var props = keyString.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
         return new SchemaKey(props[0], props[1], props[2]);
     }
-
 }
 
-public interface IProfileSchemaGrain:IGrainWithStringKey
+public interface ISchemaRegistryGrain:IGrainWithStringKey
 {
     Task<JsonSchema> GetSchemaAsync(string type);
     Task<SiteRegistry> GetRegistryAsync();

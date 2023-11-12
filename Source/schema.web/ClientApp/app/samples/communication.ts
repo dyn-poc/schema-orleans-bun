@@ -3,26 +3,42 @@ import {Sample} from "~/samples/Sample";
 const communication: Sample = {
 
   schema: {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "type": "object",
-
+    "$id": "communication-entry",
     "required": [
       "status"
     ],
-    "oneOf": [
-      {
-        "$ref": "opt-in",
-        "title": "Opt-in"
+    "properties": {
+      "status": {
+        "type": "string",
+        "enum": ["opt-in", "opt-out", "notice"],
+        "default": "notice"
       },
-      {
-        "$ref": "opt-out",
-        "title": "Opt-out"
+      "channel": {
+        "type": "string",
+        "readOnly": true,
+        "default": "email",
+        "enum": [
+          "email",
+          "sms",
+          "shipping"
+        ]
       },
-      {
-        "$ref": "notice",
-        "title": "Notice"
+    },
+    "dependencies": {
+      "status": {
+        "oneOf": [
+          {
+            "$ref": "opt-in"
+          },
+          {
+            "$ref": "opt-out"
+          },
+          {
+            "$ref": "notice"
+          }
+        ]
       }
-    ],
+    },
     "$defs": {
       "opt-in": {
         "$id": "opt-in",
@@ -87,20 +103,12 @@ const communication: Sample = {
           "duration"
         ]
       }
+    }
     },
-    "$id": "source-schema"
-  },
   uiSchema: {
-    // status: {
-    //   'ui:widget': 'radio',
-    //   'ui:options': {
-    //     optIn: 'Opt-in',
-    //     optOut: 'Opt-out',
-    //     notice: 'Notice'
-    //   }
-    // },
+
     "status": {
-      'ui:widget': 'hidden'
+      'ui:widget': 'select',
     },
     interests: {
       'ui:widget': 'checkboxes'

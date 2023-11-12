@@ -247,20 +247,30 @@ export async function loader({
                                  params: {schema}
 
                              }: LoaderFunctionArgs) {
-
+    console.log("loader schema", schema);
     const sample = schema as "simple" || "communication";
-    return json(Samples[sample]);
+    return json( {$id: schema, ...Samples[sample]});
 
 }
 
 export default function EditorsPage() {
     // @ts-ignore
     const {schema: initialSchema, formData: initialFormData, uiSchema: uiSchema} = useLoaderData<Sample>();
-    const [schema, setSchema] = useState({$id: "source-schema", ...initialSchema});
+    const [schema, setSchema] = useState(initialSchema);
     const [formData, setFormData] = useState(initialFormData);
     const [bundledSchema, setBundledSchema] = useState({});
     const [formState, setFormState] = useState({});
+    useEffect(() => {
+        console.log("formState", formState);
+    }, [formState]);
 
+    useEffect(() => {
+        console.log("EditorsPage initialSchema", initialSchema);
+    }, [initialSchema]);
+
+    useEffect(() => {
+        console.log("EditorsPage schema", schema);
+    }, [schema]);
 
     return (
         <div className={"d-flex flex-row flex-wrap align-content-stretch w-100 p-3 justify-content-between"}
@@ -269,7 +279,6 @@ export default function EditorsPage() {
             <BundledSchemaEditor schema={schema} onChange={setBundledSchema} className={"w-50"}/>
             <FormEditor schema={bundledSchema} formData={formData} onChange={setFormData}  className={"w-50"}/>
             <Validations schema={schema} formData={formData} onChange={setFormState}/>
-
             <Form schema={bundledSchema} uiSchema={uiSchema} formData={formData} onChange={setFormState} />
         </div>
     );

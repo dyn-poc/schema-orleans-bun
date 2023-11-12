@@ -86,7 +86,7 @@ public class Program
                     services.Configure<StorageOptions>(
                         context.Configuration.GetSection(nameof(ApplicationOptions.Storage)));
                     services.AddHttpClient()
-                        .AddHttpClient<IProfileSchemaGrain>();
+                        .AddHttpClient<ISchemaRegistryGrain>();
                     services.AddHttpClient();
                     services.AddLogging(logger=>
                     {

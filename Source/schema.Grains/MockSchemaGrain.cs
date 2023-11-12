@@ -10,20 +10,18 @@ using Microsoft.Extensions.Logging;
 using Orleans;
 using Orleans.Runtime;
 
-public class ResolvedSchemaGrain : Grain, IResolvedSchemaGrain
+public class MockSchemaGrain : Grain, IMockSchemaGrain
 {
     private readonly IPersistentState<JsonNodeBaseDocument?> state;
     private readonly EvaluationOptions options = new();
-    private readonly ILogger<ResolvedSchemaGrain> logger;
-    private readonly HttpClient httpClient;
+    private readonly ILogger<MockSchemaGrain> logger;
     private JsonNodeBaseDocument root;
     private JsonSchema bundled;
 
-    public ResolvedSchemaGrain(ILogger<ResolvedSchemaGrain> logger, HttpClient httpClient)
+    public MockSchemaGrain(ILogger<MockSchemaGrain> logger)
     {
         this.logger = logger;
-        this.httpClient = httpClient;
-        this.options = new EvaluationOptions()
+         this.options = new EvaluationOptions()
         {
             EvaluateAs = SpecVersion.Draft7,
             SchemaRegistry =

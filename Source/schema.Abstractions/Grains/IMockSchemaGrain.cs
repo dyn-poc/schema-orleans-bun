@@ -4,7 +4,7 @@ using Json.Pointer;
 using Json.Schema;
 using Orleans;
 
-public interface IResolvedSchemaGrain : IGrainWithStringKey
+public interface IMockSchemaGrain : IGrainWithStringKey
 {
     Task<JsonSchema?> GetSchema(JsonPointer? pointer = null);
 }

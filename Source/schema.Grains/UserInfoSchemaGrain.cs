@@ -8,24 +8,25 @@ using Orleans;
 using Orleans.Runtime;
 using schema.Abstractions.Grains;
 
-public class SchemaGrain : Grain, ISchemaGrain
+public class UserInfoSchemaGrain : Grain, ISchemaGrain
 {
     private EvaluationOptions options = new();
 
     private IPersistentState<UserInfo> State { get; }
 
-    public SchemaGrain([PersistentState("schema", "schema_store")] IPersistentState<UserInfo> state) => this.State = state;
+    public UserInfoSchemaGrain([PersistentState("schema", "schema_store")] IPersistentState<UserInfo> state) =>
+        this.State = state;
 
     /// <inheritdoc />
     public override async Task OnActivateAsync()
     {
         var registry = await this
-            .GrainFactory.GetGrain<IProfileSchemaGrain>(this.GetPrimaryKeyString())
+            .GrainFactory.GetGrain<ISchemaRegistryGrain>(this.GetPrimaryKeyString())
             .GetRegistryAsync()
             .ConfigureAwait(true);
 
         this.options = registry.ToEvaluationOptions();
-        if (State.State.JsonSchema.Keywords.Count == 0)
+        if (this.State.State.JsonSchema.Keywords is {Count:0 } or null)
         {
             this.State.State = new UserInfo(new JsonSchemaBuilder()
                 .Id(this.GetPrimaryKeyString())
@@ -35,7 +36,7 @@ public class SchemaGrain : Grain, ISchemaGrain
                     ["data"] = new JsonSchemaBuilder().Ref("data"),
                     ["preferences"] = new JsonSchemaBuilder().Ref("preferences"),
                     ["subscriptions"] = new JsonSchemaBuilder().Ref("subscriptions"),
-                    ["restricted"] =  JsonSchema.FromText(new JsonObject()
+                    ["restricted"] = JsonSchema.FromText(new JsonObject()
                     {
                         ["$ref"] = $"profile",
                         ["properties"] = new JsonObject() { ["age"] = true, ["name"] = true },
@@ -55,13 +56,9 @@ public class SchemaGrain : Grain, ISchemaGrain
         return this.State.State.JsonSchema.Bundle(this.options);
     }
 
-    ValueTask<JsonDocument> ISchemaGrain.GetSchemaAsync() => ValueTask.FromResult(this.State.State.JsonSchema.ToJsonDocument());
+    ValueTask<JsonDocument> ISchemaGrain.GetSchemaAsync() =>
+        ValueTask.FromResult(this.State.State.JsonSchema.ToJsonDocument());
 }
-
-
-
-
-
 
 public class ContextSchema
 {
@@ -77,38 +74,4 @@ public class ContextSchema
                 ["identity"] = this.Identity,
                 ["info"] = this.UserInfo
             });
-
 }
-
-
-// public record UserInfo(string Id, Dictionary<string, UserInfo.Section> Sections)
-// {
-//     public JsonSchemaBuilder JsonSchemaBuilder =>
-//         new JsonSchemaBuilder()
-//             .Id(this.Id)
-//             .Properties(this.Sections.Select(e => (e.Key, e.Value.Apply(new JsonSchemaBuilder()).Build())).ToArray()
-//             );
-//
-//     public record Section(string Ref, IReadOnlyDictionary<string, JsonSchema> Properties)
-//     {
-//         public JsonSchemaBuilder SchemaBuilder { get; init; } = new JsonSchemaBuilder().Ref(Ref).Properties(Properties)
-//             .AdditionalProperties(false);
-//
-//         public static implicit operator JsonSchema(Section section) => section.SchemaBuilder;
-//         public static implicit operator JsonSchemaBuilder(Section section) => section.SchemaBuilder;
-//
-//         public JsonSchemaBuilder Apply(JsonSchemaBuilder builder) =>
-//             builder.Ref(this.Ref).Properties(this.Properties).AdditionalProperties(false);
-//
-//         // public (string, JsonSchema) Property => (this.Name, this.Apply(new JsonSchemaBuilder()).Build());
-//     }
-//     // public record Section(string Name, string Ref, IReadOnlyDictionary<string, JsonSchema> Properties)
-//     // {
-//     //     public JsonSchemaBuilder Apply(JsonSchemaBuilder builder) =>
-//     //         builder.Ref(this.Ref).Properties(this.Properties).AdditionalProperties(false);
-//     //
-//     //     public (string, JsonSchema) Property => (this.Name, this.Apply(new JsonSchemaBuilder()).Build());
-//     // }
-// }
-
-

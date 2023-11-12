@@ -16,7 +16,7 @@ public class BundledSchemaGrain: Grain, IBundledSchemaGrain
     public override async Task OnActivateAsync()
     {
         var registry = await this
-            .GrainFactory.GetGrain<IProfileSchemaGrain>(this.GetPrimaryKeyString())
+            .GrainFactory.GetGrain<ISchemaRegistryGrain>(this.GetPrimaryKeyString())
             .GetRegistryAsync()
             .ConfigureAwait(true);
 
