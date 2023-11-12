@@ -167,7 +167,7 @@ Task("DockerBuild")
                             .Append("minver")
                             .AppendSwitch("--default-pre-release-phase", preReleasePhase))
                         .SetRedirectStandardOutput(true),
-                        out var versionLines);
+                            out var versionLines);
                 if (exitCode != 0)
                 {
                     throw new Exception($"dotnet minver failed with non zero exit code {exitCode}.");
