@@ -21,22 +21,9 @@ public class SchemaGrainTest : ClusterFixture
     [Fact]
     public async Task SetSchema_ShouldReturnUpdatedSchema()
     {
-        var grain = this.Cluster.GrainFactory.GetGrain<ISchemaGrain>("http://localhost:5503/4_DxFqHMTOAJNe9VmFvyO3Uw");
+        var grain = this.Cluster.GrainFactory.GetGrain<ISchemaGrain>("http://localhost:5503/schema/4_DxFqHMTOAJNe9VmFvyO3Uw");
 
-        var schema = new JsonSchemaBuilder()
-            .Type(SchemaValueType.String)
-            .Build();
-
-        // var result = await grain.SetSchemaAsync(new UserInfo("http://accounts.eu1.gigya.com/4_DxFqHMTOAJNe9VmFvyO3Uw" , new Dictionary<string, UserInfo.Section>()
-        // {
-        //     ["profile"] = new UserInfo.Section("http://accounts.eu1.gigya.com/4_DxFqHMTOAJNe9VmFvyO3Uw/profile",new ReadOnlyDictionary<string, JsonSchema>(new Dictionary<string, JsonSchema>()
-        //     {
-        //         ["age"] = true,
-        //         ["name"] = true
-        //     }))
-        // })).ConfigureAwait(false);
-
-        var result = await grain.SetSchemaAsync(new UserInfo(JsonSchema.FromText(GetSchema("http://localhost:5503/4_DxFqHMTOAJNe9VmFvyO3Uw").ToJsonString()) )).ConfigureAwait(false);
+        var result = await grain.SetSchemaAsync(new UserInfo(JsonSchema.FromText(GetSchema("http://localhost:5503/schema/4_DxFqHMTOAJNe9VmFvyO3Uw").ToJsonString()) )).ConfigureAwait(false);
 
 
         this.TestOutputHelper.WriteLine(result.ToJsonDocument().RootElement.ToJsonString());
