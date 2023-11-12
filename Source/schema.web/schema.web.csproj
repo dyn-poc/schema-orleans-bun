@@ -14,7 +14,7 @@
 
     <ItemGroup>
         <PackageReference Include="JsonSchema.Net" Version="5.2.6" />
-        <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="6.0.23"/>
+        <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="6.0.24"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -37,8 +37,8 @@
         <Exec Command="bun --version" ContinueOnError="true">
             <Output TaskParameter="ExitCode" PropertyName="ErrorCode"/>
         </Exec>
-        <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE."/>
-        <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..."/>
+        <Error Condition="'$(ErrorCode)' != '0'" Text="Bunjs is required to build and run this project. To continue, please install Bunjs from https://bun.sh/, and then restart your command prompt or IDE."/>
+        <Message Importance="high" Text="Restoring dependencies using 'bun'. This may take several minutes..."/>
         <Exec WorkingDirectory="$(SpaRoot)" Command="bun install"/>
     </Target>
 
@@ -59,25 +59,7 @@
     </Target>
 
 
-  <ItemGroup>
-    <None Update="RemixApp\.prettierignore">
-      <DependentUpon>.prettierrc</DependentUpon>
-    </None>
-  </ItemGroup>
 
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="bun\my-remix-app\build\metafile.css.json" />
-    <_ContentIncludedByDefault Remove="bun\my-remix-app\build\metafile.js.json" />
-    <_ContentIncludedByDefault Remove="bun\my-remix-app\build\metafile.server.json" />
-    <_ContentIncludedByDefault Remove="rbun\build\metafile.css.json" />
-    <_ContentIncludedByDefault Remove="rbun\build\metafile.js.json" />
-    <_ContentIncludedByDefault Remove="rbun\build\metafile.server.json" />
-    <_ContentIncludedByDefault Remove="remix\build\metafile.css.json" />
-    <_ContentIncludedByDefault Remove="remix\build\metafile.js.json" />
-    <_ContentIncludedByDefault Remove="remix\build\metafile.server.json" />
-    <_ContentIncludedByDefault Remove="remix\package.json" />
-    <_ContentIncludedByDefault Remove="remix\tsconfig.json" />
-  </ItemGroup>
 
   <ItemGroup>
     <Folder Include="ClientApp\app\components\" />

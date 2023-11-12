@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.Json.Nodes;
 using Json.Schema;
 using Orleans;
@@ -7,6 +8,7 @@ public class SchemaRegistryService: IHostedService
     private readonly HttpClient httpClient;
     private readonly ILogger<SchemaRegistryService> logger;
     private IClusterClient clusterClient;
+    private  Task<IClusterClient> clusterClientTask;
 
     public SchemaRegistryService(HttpClient httpClient, ILogger<SchemaRegistryService> logger)
     {
@@ -28,7 +30,29 @@ public class SchemaRegistryService: IHostedService
 
 
     /// <inheritdoc />
-    public async Task StartAsync(CancellationToken cancellationToken) => this.clusterClient = await SchemaClusterClient.ConnectAsync();
+    public async  Task StartAsync(CancellationToken cancellationToken)
+    {
+         this.clusterClientTask = StartRetryAsync(cancellationToken);
+         this.clusterClientTask.ContinueWith(clusterClient => this.clusterClient = clusterClient.Result);
+    }
+
+    public async Task<IClusterClient> StartRetryAsync(CancellationToken cancellationToken)
+    {
+        while (cancellationToken is not {IsCancellationRequested: true})
+        {
+            try
+            {
+                return await SchemaClusterClient.ConnectAsync();
+            }
+            catch (Exception e)
+            {
+                this.logger.LogError(e, "Failed to connect to cluster");
+                await Task.Delay(500, cancellationToken);
+
+            }
+        }
+         throw new TaskCanceledException("Failed to connect to cluster");
+    }
 
 
 
