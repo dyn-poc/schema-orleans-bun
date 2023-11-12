@@ -40,6 +40,7 @@ COPY "Source/schema.Client/*.csproj" "Source/schema.Client/"
 COPY "Source/schema.Grains/*.csproj" "Source/schema.Grains/"
 COPY "Source/schema.Server/*.csproj" "Source/schema.Server/"
 COPY "Tests/schema.Server.IntegrationTest/*.csproj" "Tests/schema.Server.IntegrationTest/"
+COPY "Tests/schema.Client.UnitTest/*.csproj" "Tests/schema.Client.UnitTest/"
 # Run the restore and cache the packages on the host for faster subsequent builds.
 RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
     dotnet restore
