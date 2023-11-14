@@ -57,7 +57,8 @@ export async function loader({
         return json( data || mock)
 
     }catch (e) {
-        console.error(e);
+        const {stack, message} = e as Error;
+        console.error(`Failed to GET ${site}/${schemaName}`,{stack, message});
         return json( mock)
     }
 }

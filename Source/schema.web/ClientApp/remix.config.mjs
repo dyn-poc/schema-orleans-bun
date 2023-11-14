@@ -9,10 +9,15 @@ export default {
   browserNodeBuiltinsPolyfill:{
     modules: {
       buffer: true, // Provide a JSPM polyfill
-      fs: "empty", // Provide an empty polyfill,
+      fs: true, // Provide an empty polyfill,
       path: true ,
       process: true,
-      dom:true
+      dom:true,
+      util: true,
+      http: true,
+        https: true,
+        url: true
+
     },
     globals: {
       Buffer: true,

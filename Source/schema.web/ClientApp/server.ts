@@ -12,7 +12,7 @@ export const server = Bun.serve({
   hostname: Bun.env.HOSTNAME || "localhost",
 
   async fetch(request) {
-    console.log("fetch", request.url);
+    // console.debug("fetch", request.url);
 
     return tryPing(request) ||
     tryPublicFolder(request) ||
@@ -30,8 +30,8 @@ Bun.serve({
   hostname: server.hostname,
 
   async fetch(request) {
-    console.log("fetch", request.url);
-    return new Response("<html lang='en'>hello</html>");
+    // console.debug("fetch", request.url);
+    return new Response("<html lang='en'>go to <a>http://localhost:44413</a> </html>");
 
   }});
 

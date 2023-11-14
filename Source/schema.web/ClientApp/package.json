@@ -9,6 +9,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@apidevtools/json-schema-ref-parser": "^11.1.0",
     "@astronautlabs/jsonpath": "^1.1.2",
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.1",
@@ -16,7 +17,7 @@
     "@mui/material": "^5.14.16",
     "@remix-run/css-bundle": "latest",
     "@remix-run/node": "latest",
-    "@remix-run/react": "latest",
+    "@remix-run/react": "2.2.0",
     "@remix-run/serve": "latest",
     "@remix-run/server-runtime": "latest",
     "@rjsf/core": "^5.13.4",
