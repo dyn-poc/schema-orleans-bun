@@ -115,6 +115,7 @@ public static class SchemaAPI
         app.MapGet("/schema/{apiKey}", async (context) =>
         {
             var Request = context.Request;
+            var apiKey =context.GetRouteValue("apiKey");
 
 
             var schema = await context

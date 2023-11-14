@@ -5,7 +5,7 @@ using Json.Schema.Generation;
 
 public class SchemaConvert
 {
-    public static JsonSchema Convert(Dictionary<string, Field> fields, string root) => new Schema(fields, root).ToTree().Apply(new JsonSchemaBuilder());
+    public static JsonSchema Convert(Dictionary<string, Field> fields, string root) => new Schema(fields, root).ToTree().Apply(new JsonSchemaBuilder().Id(root));
 }
 
 public record Schema(Dictionary<string, Field> Fields,

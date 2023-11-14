@@ -29,13 +29,13 @@ public class SchemaRegistryRegistryGrain : Grain, ISchemaRegistryGrain
         var uri = new Uri(this.GetPrimaryKeyString());
 
         var accountSchema =
-            await this.GetAccountsSchemaAsync(uri.Segments.Skip(2).First().TrimEnd('/')).ConfigureAwait(true);
+            await this.GetAccountsSchemaAsync(uri.Segments.Last().TrimEnd('/')).ConfigureAwait(true);
         this.siteRegistry = new(uri)
         {
             ["profile"] = SchemaConvert.Convert(accountSchema!.Profile.Fields, "profile"),
             ["data"] = SchemaConvert.Convert(accountSchema!.Data.Fields, "data"),
-            ["preferences"] = SchemaConvert.Convert(accountSchema!.Preferences.Fields, "data"),
-            ["subscriptions"] = SchemaConvert.Convert(accountSchema!.Subscriptions.Fields, "data")
+            ["preferences"] = SchemaConvert.Convert(accountSchema!.Preferences.Fields, "preferences"),
+            ["subscriptions"] = SchemaConvert.Convert(accountSchema!.Subscriptions.Fields, "subscriptions")
         };
     }
 

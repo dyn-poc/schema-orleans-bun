@@ -22,8 +22,8 @@ public class FieldNode : Dictionary<string, FieldNode>
     {
         schemaBuilder.Title(this.Name);
         schemaBuilder.Description(this.Name);
-        schemaBuilder.Id(this.Id);
-        // schemaBuilder.Anchor(this.Name);
+        // schemaBuilder.Id(this.Id);
+        schemaBuilder.Anchor(this.Name);
         if (this.Field is not null)
         {
             ApplyFieldSchema(this.Field, schemaBuilder);

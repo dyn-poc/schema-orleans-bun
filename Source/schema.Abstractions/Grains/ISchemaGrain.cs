@@ -2,7 +2,6 @@ namespace schema.Abstractions.Grains;
 
 using System.Text.Json;
 using Json.Schema;
-using Json.Schema.Serialization;
 using Orleans;
 using Orleans.Concurrency;
 

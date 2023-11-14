@@ -32,16 +32,17 @@ public class UserInfoSchemaGrain : Grain, ISchemaGrain
                 .Id(this.GetPrimaryKeyString())
                 .Properties(new Dictionary<string, JsonSchema>()
                 {
-                    ["profile"] = new JsonSchemaBuilder().Ref("profile"),
-                    ["data"] = new JsonSchemaBuilder().Ref("data"),
-                    ["preferences"] = new JsonSchemaBuilder().Ref("preferences"),
-                    ["subscriptions"] = new JsonSchemaBuilder().Ref("subscriptions"),
-                    ["restricted"] = JsonSchema.FromText(new JsonObject()
-                    {
-                        ["$ref"] = $"profile",
-                        ["properties"] = new JsonObject() { ["age"] = true, ["name"] = true },
-                        ["additionalProperties"] = false
-                    }.ToJsonString())
+                    ["profile"] = new JsonSchemaBuilder().Ref("profile").Anchor("profile"),
+                    ["data"] = new JsonSchemaBuilder().Ref("data").Anchor("data"),
+                    ["preferences"] = new JsonSchemaBuilder().Ref("preferences").Anchor("preferences"),
+                    ["subscriptions"] = new JsonSchemaBuilder().Ref("subscriptions").Anchor("subscriptions"),
+                    // ["restricted"] = JsonSchema.FromText(new JsonObject()
+                    // {
+                    //     ["$ref"] = $"profile",
+                    //     ["properties"] = new JsonObject() { ["age"] = true, ["name"] = true },
+                    //     ["additionalProperties"] = false
+                    // }.ToJsonString()
+
                 })
                 .Build());
             await this.State.WriteStateAsync();
