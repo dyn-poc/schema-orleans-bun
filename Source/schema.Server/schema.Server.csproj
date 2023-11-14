@@ -25,6 +25,11 @@
 
     <ItemGroup Label="Package References">
         <PackageReference Include="Boxed.AspNetCore" Version="8.1.2"/>
+        <PackageReference Include="Boxed.AspNetCore.Swagger" Version="10.0.0" />
+<!--        <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="6.0.24">-->
+<!--          <PrivateAssets>all</PrivateAssets>-->
+<!--          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>-->
+<!--        </PackageReference>-->
         <PackageReference Include="OrleansDashboard" Version="3.6.2"/>
         <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="6.0.0"/>
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0"/>
@@ -47,5 +52,6 @@
         <ProjectReference Include="..\schema.Abstractions\schema.Abstractions.csproj"/>
         <ProjectReference Include="..\schema.Grains\schema.Grains.csproj"/>
     </ItemGroup>
+  
 
 </Project>
