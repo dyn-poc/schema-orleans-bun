@@ -8,6 +8,7 @@ using Json.Pointer;
 using Json.Schema;
 using Xunit.Abstractions;
 
+
 public class SchemaConvertTest : Fixture
 {
     /*
@@ -133,10 +134,10 @@ public class SchemaConvertTest : Fixture
             schema.GetProperties()!["favorites"]!.GetProperties()!["music"]!.GetProperties()!["id"]!.GetJsonType());
 
         //assert anchors and ids
-        Assert.Equal("favorites", schema.GetProperties()!["favorites"]!.GetId().ToString());
+        // Assert.Equal("favorites", schema.GetProperties()!["favorites"]!.GetId().ToString());
 
         //TODO add anchor back
-        // Assert.Equal("favorites", schema.GetProperties()!["favorites"]!.GetAnchor());
+       Assert.Equal("favorites", schema.GetProperties()!["favorites"]!.GetAnchor());
 
         // Assert.Equal("favorites.music", schema.GetProperties()!["favorites"]!.GetProperties()!["music"]!.Id);
         // Assert.Equal("music", schema.GetProperties()!["favorites"]!.GetProperties()!["music"]!.Anchor);
