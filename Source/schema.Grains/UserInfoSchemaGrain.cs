@@ -20,12 +20,6 @@ public class UserInfoSchemaGrain : Grain, ISchemaGrain
     /// <inheritdoc />
     public override async Task OnActivateAsync()
     {
-        var registry = await this
-            .GrainFactory.GetGrain<ISchemaRegistryGrain>(this.GetPrimaryKeyString())
-            .GetRegistryAsync()
-            .ConfigureAwait(true);
-
-        this.options = registry.ToEvaluationOptions();
         if (this.State.State.JsonSchema.Keywords is {Count:0 } or null)
         {
             this.State.State = new UserInfo(new JsonSchemaBuilder()
@@ -36,12 +30,7 @@ public class UserInfoSchemaGrain : Grain, ISchemaGrain
                     ["data"] = new JsonSchemaBuilder().Ref("data").Anchor("data"),
                     ["preferences"] = new JsonSchemaBuilder().Ref("preferences").Anchor("preferences"),
                     ["subscriptions"] = new JsonSchemaBuilder().Ref("subscriptions").Anchor("subscriptions"),
-                    // ["restricted"] = JsonSchema.FromText(new JsonObject()
-                    // {
-                    //     ["$ref"] = $"profile",
-                    //     ["properties"] = new JsonObject() { ["age"] = true, ["name"] = true },
-                    //     ["additionalProperties"] = false
-                    // }.ToJsonString()
+
 
                 })
                 .Build());

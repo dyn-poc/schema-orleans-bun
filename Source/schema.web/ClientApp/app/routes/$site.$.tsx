@@ -42,7 +42,7 @@ export const meta: MetaFunction<
 // }
 
 export async function loader({
-                                 params:{site, schema: schemaName},
+                                 params:{site, ["*"]: schemaName},
 
                              }: LoaderFunctionArgs) {
     try{

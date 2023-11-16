@@ -115,6 +115,28 @@ export default function SchemaViewer() {
                                   bundled
                               </NavLink>
                           </li>
+
+                        <li className={"nav-item"} key={"guest"}>
+                          <NavLink
+                            to="guest"
+                            relative={"route"}
+                            className={"nav-link"}
+
+                            state={{ ref: site, absolute: false, href: site }}
+                          >
+                            guest
+                          </NavLink>
+                        </li>
+                        <li className={"nav-item"} key={"guest/bundled"}>
+                          <NavLink
+                            to="guest/bundled"
+                            relative={"route"}
+                            className={"nav-link"}
+                            state={{ ref: site, absolute: false, href: site }}
+                          >
+                            guest/bundled
+                          </NavLink>
+                        </li>
                           {refs.filter(r=> !r.absolute).map(({href, ref, absolute}) => (
                               <li key={ref}>
                                   <NavLink

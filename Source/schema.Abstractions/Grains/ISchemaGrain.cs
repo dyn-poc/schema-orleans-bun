@@ -43,6 +43,8 @@ public interface ISchemaRegistryGrain:IGrainWithStringKey
     Task<JsonSchema> GetSchemaAsync(string type);
     Task<SiteRegistry> GetRegistryAsync();
 
+    ValueTask<ImmutableSchema> BundleSchemaAsync(ImmutableSchema schema);
+
 
 }
 

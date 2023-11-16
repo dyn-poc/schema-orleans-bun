@@ -11,12 +11,14 @@ using Orleans.Concurrency;
 using schema.Abstractions.Grains;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
-[StatelessWorker]
+[StatelessWorker, Reentrant]
 public class SchemaRegistryRegistryGrain : Grain, ISchemaRegistryGrain
 {
      private readonly HttpClient httpClient = new();
      private readonly ILogger<SchemaRegistryRegistryGrain> logger;
     private SiteRegistry siteRegistry;
+    private EvaluationOptions options;
+
     public SchemaRegistryRegistryGrain(ILogger<SchemaRegistryRegistryGrain> logger)
     {
         this.logger = logger;
@@ -29,16 +31,28 @@ public class SchemaRegistryRegistryGrain : Grain, ISchemaRegistryGrain
         var uri = new Uri(this.GetPrimaryKeyString());
 
         var accountSchema =
-            await this.GetAccountsSchemaAsync(uri.Segments.Last().TrimEnd('/')).ConfigureAwait(true);
-        this.siteRegistry = new(uri)
-        {
-            ["profile"] = SchemaConvert.Convert(accountSchema!.Profile.Fields, "profile"),
-            ["data"] = SchemaConvert.Convert(accountSchema!.Data.Fields, "data"),
-            ["preferences"] = SchemaConvert.Convert(accountSchema!.Preferences.Fields, "preferences"),
-            ["subscriptions"] = SchemaConvert.Convert(accountSchema!.Subscriptions.Fields, "subscriptions")
-        };
+            await this.GetAccountsSchemaAsync(uri.Segments.Last(e => e!= "/").TrimEnd('/')).ConfigureAwait(true);
+        this.options = new() { EvaluateAs = SpecVersion.Draft202012 };
+        this.options.SchemaRegistry.Register(uri, new JsonSchemaBuilder()
+            .Id(this.GetPrimaryKeyString())
+            .Properties(new Dictionary<string, JsonSchema>()
+            {
+                ["profile"] =SchemaConvert.Convert(accountSchema!.Profile.Fields, "profile").Id($"{this.GetPrimaryKeyString()}/profile"),
+                ["data"] = SchemaConvert.Convert(accountSchema!.Data.Fields, "data").Id($"{this.GetPrimaryKeyString()}/data"),
+                ["preferences"] = SchemaConvert.Convert(accountSchema!.Preferences.Fields, "preferences").Id($"{this.GetPrimaryKeyString()}/preferences"),
+                ["subscriptions"] = SchemaConvert.Convert(accountSchema!.Subscriptions.Fields, "subscriptions").Id($"{this.GetPrimaryKeyString()}/subscriptions")
+
+
+            })
+            .Build());
+
     }
 
+
+    public ValueTask<ImmutableSchema> BundleSchemaAsync(ImmutableSchema schema) =>
+        ValueTask.FromResult(this.BundleSchema(schema));
+
+    private  ImmutableSchema BundleSchema(JsonSchema schema)=> schema.Bundle(this.options);
 
     private async Task<AccountsSchema?> GetAccountsSchemaAsync(string apiKey)
     {
