@@ -129,7 +129,8 @@ public static class SchemaAPI
         });
 
 
-        app.MapGet("/schema/{apiKey}/guest", async (context) =>
+
+        app.MapGet("/schema/{apiKey}/auth", async (context) =>
         {
             var Request = context.Request;
             var apiKey =context.GetRouteValue("apiKey");
@@ -138,8 +139,8 @@ public static class SchemaAPI
             var schema = await context
                 .RequestServices
                 .GetRequiredService<SchemaRegistryService>()
-                .ClusterClient.GetGrain<IGuestSchemaGrain>(Request.GetDisplayUrl())
-                .GetSchemaAsync()
+                .ClusterClient.GetGrain<IAuthSchemaGrain>(Request.GetDisplayUrl())
+                .GetBundledSchema()
                 .ConfigureAwait(false);
 
             context.Items["schema"] = schema;

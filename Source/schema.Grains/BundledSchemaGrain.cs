@@ -17,20 +17,13 @@ public class BundledSchemaGrain: Grain, IBundledSchemaGrain
     /// <inheritdoc />
     public override async Task OnActivateAsync()
     {
-        // var registry = await this
-        //     .GrainFactory.GetGrain<ISchemaRegistryGrain>(this.GetPrimaryKeyString())
-        //     .GetRegistryAsync()
-        //     .ConfigureAwait(true);
-
-        // this.options = registry.ToEvaluationOptions();
         this.options.EvaluateAs = SpecVersion.Draft202012;
          var schema = await this.GrainFactory.GetGrain<ISchemaGrain>(this.GetPrimaryKeyString()).GetSchemaAsync();
-        // this.bundledSchema =  schema.Deserialize<JsonSchema>().Bundle(this.options);
+
         this.bundledSchema = await this
             .GrainFactory.GetGrain<ISchemaRegistryGrain>(this.GetPrimaryKeyString())
             .BundleSchemaAsync(schema.Deserialize<JsonSchema>()!)
             .ConfigureAwait(true);
-        // this.options.SchemaRegistry.Register(new Uri(this.GetPrimaryKeyString()), this.bundledSchema);
 
     }
 

@@ -12,6 +12,7 @@ public class GuestSchemaGrain:Grain, IGuestSchemaGrain
     private EvaluationOptions options = new();
     private string siteSchema;
     private ISchemaRegistryGrain siteSchemaGrain;
+    private JsonSchema bundledSchema;
 
     private IPersistentState<GuestSchema> State { get; }
 
@@ -23,46 +24,52 @@ public class GuestSchemaGrain:Grain, IGuestSchemaGrain
     {
         this.siteSchema = new Uri(this.GetPrimaryKeyString()).GetParentUri().ToString().TrimEnd('/');
         this.siteSchemaGrain =   this.GrainFactory.GetGrain<ISchemaRegistryGrain>(this.siteSchema);
-        // var schema = await this
-        //     .GrainFactory.GetGrain<IBundledSchemaGrain>(siteSchema)
-        //     .GetSchemaAsync()
-        //     .ConfigureAwait(true);
 
-        // this.options.SchemaRegistry.Register(new Uri(siteSchema), schema.Deserialize<JsonSchema>()!);
-        if (this.State.State.JsonSchema.Keywords is {Count:0 } or null)
+        if (this.State.State.JsonSchema.Keywords is { Count: 0 } or null)
         {
             this.State.State = new GuestSchema(new JsonSchemaBuilder()
                 .Id(this.GetPrimaryKeyString())
-                .Ref(this.siteSchema)
-                .Properties(new Dictionary<string, JsonSchema>()
-                {
-                    // ["preferences"] = new JsonSchemaBuilder().Ref("preferences").Anchor("preferences").Properties(new Dictionary<string, JsonSchema>()
-                    // {
-                    //     ["terms"] = true
-                    // }).AdditionalProperties(false),
-                    // ["subscriptions"] = new JsonSchemaBuilder().Ref("subscriptions").Anchor("subscriptions").Properties(new Dictionary<string, JsonSchema>()
-                    // {
-                    //     ["newsletter"] = true
-                    // }).AdditionalProperties(false),
-                    ["data"] = new JsonSchemaBuilder().Ref("profile").Properties(new Dictionary<string, JsonSchema>()
+                 .Properties(
+                    new Dictionary<string, JsonSchema>()
                     {
-                        ["zip"] = true
-                    }).AdditionalProperties(false),
-                    ["profile"] = new JsonSchemaBuilder().Ref("data").Properties(new Dictionary<string, JsonSchema>()
-                    {
-                        ["email"] = true,
-                        ["firstName"] = true
-                    }).AdditionalProperties(false)
+                        ["auth"] = new JsonSchemaBuilder().Const("guest"),
+                        ["user_info"] = new JsonSchemaBuilder()
+                            .Properties(new Dictionary<string, JsonSchema>()
+                            {
+                                ["preferences"] =
+                                    new JsonSchemaBuilder().Ref("preferences").Anchor("preferences")
+                                        .Properties(new Dictionary<string, JsonSchema>() { ["terms"] = true })
+                                        .AdditionalProperties(false),
+                                ["subscriptions"] =
+                                    new JsonSchemaBuilder().Ref("subscriptions").Anchor("subscriptions")
+                                        .Properties(new Dictionary<string, JsonSchema>() { ["newsletter"] = true })
+                                        .AdditionalProperties(false),
+                                ["data"] =
+                                    new JsonSchemaBuilder().Ref("profile")
+                                        .Properties(new Dictionary<string, JsonSchema>() { ["zip"] = true })
+                                        .AdditionalProperties(false),
+                                ["profile"] = new JsonSchemaBuilder().Ref("data")
+                                    .Properties(new Dictionary<string, JsonSchema>()
+                                    {
+                                        ["email"] = true, ["firstName"] = true
+                                    }).AdditionalProperties(false)
+                            })
+                    })
+                            .Build());
+                        await this.State.WriteStateAsync();
+                    }
 
-                })
-                .Build());
-            await this.State.WriteStateAsync();
+            // this.bundledSchema = await this
+            //     .GrainFactory.GetGrain<ISchemaRegistryGrain>(this.GetPrimaryKeyString())
+            //     .BundleSchemaAsync(this.State.State.JsonSchema!)
+            //     .ConfigureAwait(true);
+
+
+
         }
 
 
-    }
-
-    public async ValueTask<JsonSchema> SetSchemaAsync(GuestSchema schema)
+        public async ValueTask<JsonSchema> SetSchemaAsync(GuestSchema schema)
     {
         this.State.State = schema;
         await this.State.WriteStateAsync().ConfigureAwait(true);
@@ -75,6 +82,7 @@ public class GuestSchemaGrain:Grain, IGuestSchemaGrain
 
    public async ValueTask<JsonDocument> GetBundledSchema( ) =>
         (await this.siteSchemaGrain.BundleSchemaAsync(this.State.State.JsonSchema)).ToJsonDocument();
+
 
 
 }

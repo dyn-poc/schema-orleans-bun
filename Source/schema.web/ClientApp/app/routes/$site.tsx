@@ -115,7 +115,17 @@ export default function SchemaViewer() {
                                   bundled
                               </NavLink>
                           </li>
+                        <li className={"nav-item"} key={"auth"}>
+                          <NavLink
+                            to="auth"
+                            relative={"route"}
+                            className={"nav-link"}
 
+                            state={{ ref: site, absolute: false, href: site }}
+                          >
+                            auth
+                          </NavLink>
+                        </li>
                         <li className={"nav-item"} key={"guest"}>
                           <NavLink
                             to="guest"
