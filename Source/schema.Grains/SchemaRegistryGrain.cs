@@ -42,11 +42,24 @@ public class SchemaRegistryRegistryGrain : Grain, ISchemaRegistryGrain
                 ["preferences"] = SchemaConvert.Convert(accountSchema!.Preferences.Fields, "preferences").Id($"{this.GetPrimaryKeyString()}/preferences"),
                 ["subscriptions"] = SchemaConvert.Convert(accountSchema!.Subscriptions.Fields, "subscriptions").Id($"{this.GetPrimaryKeyString()}/subscriptions")
 
-
             })
             .Build());
 
+
+        this.siteRegistry = new SiteRegistry(uri,
+            new Dictionary<string, JsonSchema>()
+            {
+                ["profile"] = SchemaConvert.Convert(accountSchema!.Profile.Fields, "profile"),
+                ["data"] = SchemaConvert.Convert(accountSchema!.Data.Fields, "data"),
+                ["preferences"] = SchemaConvert.Convert(accountSchema!.Preferences.Fields, "preferences"),
+                ["subscriptions"] = SchemaConvert.Convert(accountSchema!.Subscriptions.Fields, "subscriptions")
+            });
+
+
+
     }
+
+
 
 
     public ValueTask<ImmutableSchema> BundleSchemaAsync(ImmutableSchema schema) =>

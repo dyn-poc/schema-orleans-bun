@@ -59,7 +59,7 @@ public record SiteRegistry(Uri Base, Dictionary<string, JsonSchema>? Schemas = n
     {
         foreach (var schema in this.Schemas)
         {
-            registry.Register(new Uri(this.Base,schema.Key), schema.Value);
+            registry.Register(new Uri($"{this.Base}/{schema.Key}"), schema.Value);
         }
     }
 
