@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Multi-Launch: schema" type="com.intellij.execution.configurations.multilaunch" factoryName="MultiLaunchConfiguration">
+  <configuration default="false" name="launch" type="com.intellij.execution.configurations.multilaunch" factoryName="MultiLaunchConfiguration">
     <option name="activateToolWindows" value="true" />
     <rows>
       <ExecutableRowSnapshot>
