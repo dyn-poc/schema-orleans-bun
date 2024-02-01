@@ -10,7 +10,7 @@
     "Development": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
+      "launchBrowser": false,
       "externalUrlConfiguration": true,
       "launchUrl": "http://localhost:8080",
       "applicationUrl": "http://localhost:5000",

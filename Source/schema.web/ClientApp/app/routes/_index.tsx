@@ -28,7 +28,7 @@ console.log(sites);
       </p>
       <hr />
       { sites.map(({apiKey})=> {
-          return <NavLink key={apiKey} to={apiKey} >{apiKey}</NavLink>
+          return <NavLink key={apiKey} to={`${apiKey}/schema`}>{apiKey}</NavLink>
       })}
 
 

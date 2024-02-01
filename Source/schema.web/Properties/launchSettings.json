@@ -11,7 +11,7 @@
     "schema.web": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:7102;http://localhost:5055",
+       "applicationUrl": "https://localhost:7102;http://localhost:5055",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.SpaProxy"

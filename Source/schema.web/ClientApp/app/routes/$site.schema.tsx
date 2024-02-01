@@ -158,8 +158,6 @@ export default function SchemaViewer() {
 
           <Outlet context={{site  }} />
 
-          {/*<Json   src={useLoaderData<typeof loader>()}/>*/}
-
       </div>
     </>
   )
