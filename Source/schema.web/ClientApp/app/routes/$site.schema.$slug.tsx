@@ -18,7 +18,7 @@ console.info({target, ASPNETCORE_HTTPS_PORT, ASPNETCORE_URLS})
 
 });
 export async function loader({
-                               params:{site, ["*"]: slug},
+                               params:{site, slug: slug},
 
                              }: LoaderFunctionArgs) {
   try{

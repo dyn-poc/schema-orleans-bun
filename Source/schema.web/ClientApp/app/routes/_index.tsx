@@ -34,8 +34,12 @@ console.log(sites);
 
 
       <p>
-        ☝️ That message above me was returned from <code>bun:sqlite</code>{" "}
-        running completely in-memory.
+        ☝️ Select a site to view it's schema
+      </p>
+
+      <NavLink to="edit">Go to playground</NavLink>
+      <p>
+        ☝️ Go to the playground to play with schema examples and work with live bundling
       </p>
     </div>
   );

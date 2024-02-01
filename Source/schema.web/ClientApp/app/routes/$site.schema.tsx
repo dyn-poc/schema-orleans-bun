@@ -8,7 +8,7 @@ import clsx from "clsx";
 import * as path from "path";
 import Json from '~/editor';
 
-import {loader as schemaLoader} from './$site.schema.$';
+import {loader as schemaLoader} from './$site.schema.$slug';
 
 export async function loader(args: LoaderFunctionArgs) {
   return schemaLoader(args);
