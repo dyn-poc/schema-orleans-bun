@@ -1,4 +1,4 @@
-import React, {ComponentType, useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {ComponentType, Suspense, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import MonacoEditor, {Monaco} from '@monaco-editor/react';
 // import { ErrorSchema, RJSFSchema, UiSchema } from '@rjsf/utils';
 import isEqualWith from 'lodash/isEqualWith';
@@ -9,8 +9,8 @@ export type UiSchema = any;
 import {RefResolver} from "json-schema-ref-resolver";
 import {Grid} from '@mui/material';
 import Samples, {Sample} from "~/samples";
-import {json, LoaderFunctionArgs} from "@remix-run/node";
-import {useLoaderData} from "@remix-run/react";
+import {defer, json, LoaderFunctionArgs} from "@remix-run/node";
+import {Await, isRouteErrorResponse, Scripts, useLoaderData, useRouteError} from "@remix-run/react";
 import ajv from "ajv";
 import v8Validator, {customizeValidator} from '@rjsf/validator-ajv8';
 import GeoPosition from "~/playground/GeoPosition";
@@ -19,6 +19,8 @@ import {RJSFValidationError} from "@rjsf/utils";
 import DemoFrame from "~/playground/DemoFrame";
 import {themes} from "~/playground/Default";
 import {FormProps, withTheme} from "@rjsf/core";
+import { addSchema } from "@hyperjump/json-schema/draft-2020-12";
+import { bundle } from "@hyperjump/json-schema/bundle";
 
 const monacoEditorOptions = {
     minimap: {
@@ -144,7 +146,22 @@ function SchemaEditor({schema, onChange, className}: SchemaEditorProps) {
 function BundledSchemaEditor({schema, onChange, className}: SchemaEditorProps) {
     const refResolver = useMemo(() => new RefResolver(), [schema]);
     const [drefSchema, setDrefSchema] = useState();
-    const onChangeCallback = useCallback(
+    const {bundlePromise} = useLoaderData<{bundlePromise:ReturnType<typeof bundle>}>();
+
+    // const [bundleAsync, setBundleAsync] = useState(Promise.resolve({}));
+    //  const bundleAsync = useMemo(() =>{
+    //    try {
+    //    addSchema(schema);
+    //    return bundle(schema.$id, {
+    //      alwaysIncludeDialect: true
+    //     }  );
+    //  }
+    //    catch{
+    //       return Promise.resolve({});
+    //     }
+    //     }, [schema]);
+
+  const onChangeCallback = useCallback(
         (dref: RJSFSchema) => {
             onChange(dref);
         },
@@ -157,8 +174,8 @@ function BundledSchemaEditor({schema, onChange, className}: SchemaEditorProps) {
 
     useEffect(() => {
         try {
-            refResolver.addSchema(schema);
-            refResolver.derefSchema(schema.$id);
+            refResolver. addSchema(schema);
+          refResolver.derefSchema(schema.$id);
             setDrefSchema(refResolver.getDerefSchema(schema.$id));
         } catch (e) {
             console.error(e);
@@ -167,7 +184,13 @@ function BundledSchemaEditor({schema, onChange, className}: SchemaEditorProps) {
 
     return (
         <div className={className}>
-            <Editor title='Bundled Schema' code={toJson(drefSchema || {})} onChange={onChangeCallback}/>
+            <Suspense fallback={<h1>fallback</h1>}>
+
+            <Await resolve={bundlePromise}>
+            {(bundled) =>  <Editor title='Bundled Schema' code={toJson(bundled || {})} onChange={onChangeCallback}/>
+            }
+          </Await>
+           </Suspense>
         </div>
     );
 }
@@ -244,12 +267,24 @@ function Errors({errors, onChange, className}: ErrorsEditorProps) {
 
 // combine editors into a remix router
 export async function loader({
-                                 params: {schema}
+                                 params: {schema: schemaName},
+                                  request
 
                              }: LoaderFunctionArgs) {
-    console.log("loader schema", schema);
-    const sample = schema as "simple" || "communication";
-    return json( {$id: schema, ...Samples[sample]});
+    console.log("loader schema", schemaName);
+    const sample = schemaName as "simple" || "communication";
+    let {schema, ...rest} = Samples[sample] as Sample;
+    schema = {$id: request.url, $schema: "https://json-schema.org/draft/2020-12/schema", ...schema};
+
+  function bundlePromise() {
+    addSchema(schema);
+    return bundle(schema.$id , {
+      alwaysIncludeDialect: true
+    });
+  }
+
+
+  return defer( {schema, bundlePromise: bundlePromise()});
 
 }
 
@@ -283,3 +318,13 @@ export default function EditorsPage() {
         </div>
     );
 }
+
+
+export function ErrorBoundary() {
+    const error = useRouteError();
+    if (isRouteErrorResponse(error)) {
+        error.status = 500
+        error.data = "Oh no! Something went wrong!"
+    }
+}
+

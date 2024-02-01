@@ -1,77 +1,24 @@
 import {ActionFunctionArgs, json, LoaderFunctionArgs, MetaFunction} from "@remix-run/node";
-import schema from "~/services/schema";
-import {Form, Outlet, useActionData, useLoaderData, useLocation, useOutletContext} from "@remix-run/react";
+ import {Form, Outlet, useActionData, useLoaderData, useLocation, useOutletContext} from "@remix-run/react";
 import Json from "~/editor";
 import React from "react";
-import axios from "axios";
-import type { loader as siteLoader } from "./$site";
-export const meta: MetaFunction<
-    typeof loader,
-    { "routes/$site": typeof siteLoader }
-> = ({ data, matches }) => {
-    const site = matches.find(
-        (match) => match.id === "routes/$site"
-    );
-    console.log("meta", {site, data, matches});
-    return [{ title: data.title, description: data.description }];
-};
 
-// export const meta: MetaFunction = ({location}) => {
-//
-//     const {href, absolute, ref}= location.state;
-//
-//     console.log("meta", {href, absolute, ref, location});
-//     return {
-//         title: "Schema Viewer"
-//     };
-// }
+import {loader as schemaLoader} from './$site.schema.$';
+import {action as schemaAction} from './$site.schema.$';
 
 export async function loader({
-                                 params:{site, schema: schemaName},
-
+                                 params:{site, schema: slug},
+...rest
                              }: LoaderFunctionArgs) {
-    try{
-        const response =  await schema(`${site}/${schemaName}`);
-        const {data } = response;
-        console.log("get schema", {
-            site,
-            schemaName,
-            data,
-            response
-        });
-        return json( data || {status: response.statusText})
-
-    }catch (e) {
-        console.error(e);
-        return json( {error: e})
-    }
+    return schemaLoader({...rest,params:{site, slug}});
 }
 
-
-export const action = async ({
-                                 params:{site, type},
-                                 request,
-                             }: ActionFunctionArgs) => {
-
-    const formData = await request.formData();
-    const response = await schema(`${site}/${type}`, {
-        method: "POST",
-        data: formData.get("input"),
-        headers: {
-            "Content-Type": "application/json",
-        },
-    });
-
-    const {data} = response;
-    console.log("response", {
-        status_code: response.status,
-        status_text: response.statusText,
-        headers: JSON.stringify(response.headers, null, 2),
-        data: response.data
-    });
-    return json(data);
-
- };
+export const action =   ({
+                                  params:{site, schema: slug},
+                                  ...request
+                              }: ActionFunctionArgs) => {
+      return schemaAction({...request, params:{site, schema: slug}});
+  }
 
 export default function SchemaViewer() {
 

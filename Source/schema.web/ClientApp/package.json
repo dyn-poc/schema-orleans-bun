@@ -12,6 +12,7 @@
     "@astronautlabs/jsonpath": "^1.1.2",
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.1",
+    "@hyperjump/json-schema": "^1.6.5",
     "@monaco-editor/react": "^4.6.0",
     "@mui/material": "^5.14.16",
     "@remix-run/css-bundle": "latest",

@@ -31,7 +31,9 @@ Bun.serve({
 
   async fetch(request) {
     console.log("fetch", request.url);
-    return new Response("<html lang='en'>hello</html>");
+     const url= new URL(request.url);
+     url.port = server.port.toString();
+    return Response.redirect(url, 301);
 
   }});
 

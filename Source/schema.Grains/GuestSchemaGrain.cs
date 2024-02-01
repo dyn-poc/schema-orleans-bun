@@ -37,18 +37,30 @@ public class GuestSchemaGrain:Grain, IGuestSchemaGrain
                             .Properties(new Dictionary<string, JsonSchema>()
                             {
                                 ["preferences"] =
+                                    //ref to original preferences schema
                                     new JsonSchemaBuilder().Ref("preferences").Anchor("preferences")
-                                        .Properties(new Dictionary<string, JsonSchema>() { ["terms"] = true })
+                                        //specify what properties are allowed
+                                        .Properties(new Dictionary<string, JsonSchema>()
+                                        {
+                                            ["terms"] = true
+                                        })
+                                        //don't allow any other properties
                                         .AdditionalProperties(false),
                                 ["subscriptions"] =
                                     new JsonSchemaBuilder().Ref("subscriptions").Anchor("subscriptions")
-                                        .Properties(new Dictionary<string, JsonSchema>() { ["newsletter"] = true })
+                                        .Properties(new Dictionary<string, JsonSchema>()
+                                        {
+                                            ["newsletter"] = true
+                                        })
                                         .AdditionalProperties(false),
                                 ["data"] =
-                                    new JsonSchemaBuilder().Ref("profile")
-                                        .Properties(new Dictionary<string, JsonSchema>() { ["zip"] = true })
+                                    new JsonSchemaBuilder().Ref("data")
+                                        .Properties(new Dictionary<string, JsonSchema>()
+                                        {
+                                            ["zip"] = true
+                                        })
                                         .AdditionalProperties(false),
-                                ["profile"] = new JsonSchemaBuilder().Ref("data")
+                                ["profile"] = new JsonSchemaBuilder().Ref("profile")
                                     .Properties(new Dictionary<string, JsonSchema>()
                                     {
                                         ["email"] = true, ["firstName"] = true
@@ -59,17 +71,10 @@ public class GuestSchemaGrain:Grain, IGuestSchemaGrain
                         await this.State.WriteStateAsync();
                     }
 
-            // this.bundledSchema = await this
-            //     .GrainFactory.GetGrain<ISchemaRegistryGrain>(this.GetPrimaryKeyString())
-            //     .BundleSchemaAsync(this.State.State.JsonSchema!)
-            //     .ConfigureAwait(true);
-
-
-
         }
 
 
-        public async ValueTask<JsonSchema> SetSchemaAsync(GuestSchema schema)
+    public async ValueTask<JsonSchema> SetSchemaAsync(GuestSchema schema)
     {
         this.State.State = schema;
         await this.State.WriteStateAsync().ConfigureAwait(true);

@@ -2,57 +2,28 @@ import EventEmitter from 'events'
 
 import React from 'react'
 import {json, LoaderFunctionArgs} from "@remix-run/node";
-import schema from "~/services/schema";
-import {Link, NavLink, Outlet, useLoaderData, useMatch} from "@remix-run/react";
+import {Link, NavLink, Outlet, useLoaderData, useMatch, useParams} from "@remix-run/react";
 import { JSONPath } from '@astronautlabs/jsonpath';
 import clsx from "clsx";
 import * as path from "path";
 import Json from '~/editor';
 
-const mock = {
- "$schema": "http://json-schema.org/draft-04/schema#",
-  "description": "A person - mock data",
-  "$id": "https://example.com/person.schema.json",
-  "title": "Person",
-  "type": "object",
-  "properties": {
-    "firstName": {
-      "type": "string",
-      "description": "The person's first name."
-    }, "lastName": {"type": "string", "description": "The person's last name."},
-  }
-};
-export async function loader({
-                                 params:{site}
+import {loader as schemaLoader} from './$site.schema.$';
 
-                             }: LoaderFunctionArgs) {
-    try{
-        const response = await schema(`${site}`);
-        console.log(`GET ${site}:`, {
-            status_code: response.status,
-            status_text: response.statusText,
-            headers: JSON.stringify(response.headers, null, 2),
-            data: response.data
-        });
-        const {data } = response.data? response : {data: mock};
-
-        return json( {site, json: data || mock})
-
-    }catch (e) {
-        console.error(e);
-        return json( mock)
-    }
+export async function loader(args: LoaderFunctionArgs) {
+  return schemaLoader(args);
 }
 
 
 
+
 export default function SchemaViewer() {
+    const {site} = useParams();
 
-    const {json, site} = useLoaderData();
+    const json = useLoaderData();
 
 
-    console.log("json", {json, site});
-  //find all the $ref in the json
+   //find all the $ref in the json
   const refs = JSONPath.query(json || {}, "$..['$ref']").map(
     (ref: string) => {return {
         href:  path.isAbsolute(ref) ? `absolute` : ref,
@@ -120,7 +91,12 @@ export default function SchemaViewer() {
                             to="auth"
                             relative={"route"}
                             className={"nav-link"}
-
+                            style={({ isActive, isPending }) => {
+                              return {
+                                fontWeight: isActive ? "bold" : "",
+                                color: isPending ? "red" : "black",
+                              };
+                            }}
                             state={{ ref: site, absolute: false, href: site }}
                           >
                             auth
@@ -131,20 +107,31 @@ export default function SchemaViewer() {
                             to="guest"
                             relative={"route"}
                             className={"nav-link"}
-
+                            style={({ isActive, isPending }) => {
+                              return {
+                                fontWeight: isActive ? "bold" : "",
+                                color: isPending ? "red" : "black",
+                              };
+                            }}
                             state={{ ref: site, absolute: false, href: site }}
                           >
                             guest
                           </NavLink>
                         </li>
-                        <li className={"nav-item"} key={"guest/bundled"}>
+                        <li className={"nav-item"} key={"guest(bundled)"}>
                           <NavLink
-                            to="guest/bundled"
+                            to="guest(bundled)"
                             relative={"route"}
                             className={"nav-link"}
+                            style={({ isActive, isPending }) => {
+                              return {
+                                fontWeight: isActive ? "bold" : "",
+                                color: isPending ? "red" : "black",
+                              };
+                            }}
                             state={{ ref: site, absolute: false, href: site }}
                           >
-                            guest/bundled
+                            guest(bundled)
                           </NavLink>
                         </li>
                           {refs.filter(r=> !r.absolute).map(({href, ref, absolute}) => (
@@ -168,9 +155,10 @@ export default function SchemaViewer() {
                       </ul>
                   </nav>
               </aside>
+
           <Outlet context={{site  }} />
 
-          <Json  src={json}/>
+          {/*<Json   src={useLoaderData<typeof loader>()}/>*/}
 
       </div>
     </>
